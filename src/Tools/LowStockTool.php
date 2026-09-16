@@ -8,9 +8,9 @@
 
 namespace DWC\PrestaMcp\Tools;
 
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpSchema;
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpTool;
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpToolAnnotations;
+use Mcp\Capability\Attribute\McpTool;
+use Mcp\Capability\Attribute\Schema;
+use Mcp\Schema\ToolAnnotations;
 
 /**
  * Read-only tools related to product stock levels.
@@ -29,11 +29,11 @@ class LowStockTool
      *
      * @return array<int, array<string, int|string>> List of low-stock products.
      */
-    #[PsMcpTool(
+    #[McpTool(
         name: 'dwc_get_low_stock_products',
         title: 'Get low-stock products',
         description: 'Returns products whose available quantity is at or below a given threshold, so the merchant can reorder.',
-        annotations: new PsMcpToolAnnotations(
+        annotations: new ToolAnnotations(
             title: 'Get low-stock products',
             readOnlyHint: true,
             destructiveHint: false,
@@ -42,9 +42,9 @@ class LowStockTool
         )
     )]
     public function getLowStockProducts(
-        #[PsMcpSchema(type: 'integer', minimum: 0, maximum: 100000)]
+        #[Schema(type: 'integer', minimum: 0, maximum: 100000)]
         int $threshold = 5,
-        #[PsMcpSchema(type: 'integer', minimum: 1, maximum: 200)]
+        #[Schema(type: 'integer', minimum: 1, maximum: 200)]
         int $limit = 50
     ): array {
         // Clamp inputs defensively even though the schema advertises bounds.

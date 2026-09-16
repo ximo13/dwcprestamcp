@@ -2,97 +2,107 @@
 
 [![CI](https://github.com/ximo13/dwcprestamcp/actions/workflows/ci.yml/badge.svg)](https://github.com/ximo13/dwcprestamcp/actions/workflows/ci.yml)
 
-Custom **MCP (Model Context Protocol)** tools for PrestaShop, community-made and
-open source. This module declares tools, prompts and resources that are
-**discovered and served by the official [`ps_mcp_server`](https://addons.prestashop.com/) module**,
-so AI agents (Claude, ChatGPT, Gemini…) can call them.
+A **standalone MCP (Model Context Protocol) server for PrestaShop**, community-made
+and open source. This module embeds its **own** MCP server — powered by the
+open-source [`mcp/sdk`](https://github.com/modelcontextprotocol/php-sdk)
+(Apache-2.0) — and exposes your store to AI agents (Claude, ChatGPT, Gemini, MCP
+Inspector) over its own authenticated HTTP endpoint.
 
-> ⚠️ This is an **independent community project** and is **not affiliated with
-> PrestaShop SA**. The `ps_mcp_server` module and its attribute classes remain
-> the property of PrestaShop SA.
+> ⚠️ Independent community project, **not affiliated with PrestaShop SA**. It does
+> **not** require and does **not** depend on the official `ps_mcp_server` module.
 
-## How it works
+## Why standalone?
 
-`ps_mcp_server` scans every installed module that exposes a public
-`isMcpCompliant()` method returning `true`. For those modules it reads the
-`src/` directory and discovers any class method annotated with the MCP
-attributes (`#[PsMcpTool]`, `#[PsMcpPrompt]`, `#[PsMcpResource]`, …). Each
-discovered tool is then exposed to connected AI agents.
-
-This module:
-
-1. Declares `isMcpCompliant(): bool` in [`dwcprestamcp.php`](dwcprestamcp.php).
-2. Registers a small PSR-4 autoloader for `DWC\PrestaMcp\` → `src/`.
-3. Ships example tools in [`src/Tools/`](src/Tools/).
+- **No dependency** on `ps_mcp_server` (or `ps_accounts` / `ps_eventbus`).
+- Runs **inside PrestaShop**, so tools have direct access to store data
+  (`Product`, `Order`, `Db`, …) — no external process, no Webservice API needed.
+- One module install, one endpoint, one token.
+- 100% open source: your code is MIT, the bundled SDK is Apache-2.0.
 
 ## Requirements
 
 - PrestaShop **8.2+** or **9.x**
 - PHP **8.1+**
-- The official **`ps_mcp_server`** module installed and enabled
-  (plus its dependencies: `ps_accounts`, `ps_eventbus`)
+- Composer (to install the bundled dependencies)
 
-## Install (merchant)
+## Install
 
-1. Zip the `dwcprestamcp/` folder and upload it in
-   **Modules > Module Manager**, or drop it in `modules/` and install it.
-2. Make sure `ps_mcp_server` is installed and enabled.
-3. Open the **MCP Server** configuration page and run a **discovery**.
-   The tools of this module appear in the tool list.
+```bash
+git clone https://github.com/ximo13/dwcprestamcp.git modules/dwcprestamcp
+cd modules/dwcprestamcp
+composer install --no-dev   # installs the MCP SDK into vendor/
+```
 
-## Included tools
+Then install the module in PrestaShop (**Modules > Module Manager**, or the CLI),
+open its configuration page, and copy the **endpoint URL** and **token**.
 
-| Tool name                   | Type      | Description                                                        |
-|-----------------------------|-----------|-------------------------------------------------------------------|
-| `dwc_get_store_info`        | read-only | Basic store info: name, PS/PHP version, language, currency.       |
-| `dwc_get_low_stock_products`| read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
+> For a merchant-friendly ZIP (no Composer needed), build a release that bundles
+> `vendor/` — see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Develop your own tools
+## Connect an AI client
 
-Add a class under `src/` (namespace `DWC\PrestaMcp\...`) and annotate a public
-method:
+### Remote (HTTP) — Claude, ChatGPT, etc.
 
-```php
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpTool;
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpToolAnnotations;
+The config page shows a ready-to-paste snippet, e.g.:
 
-#[PsMcpTool(
-    name: 'dwc_my_tool',
-    description: 'What the tool does.',
-    annotations: new PsMcpToolAnnotations(readOnlyHint: true)
-)]
-public function myTool(string $someArg): array
+```json
 {
-    return ['ok' => true];
+  "mcpServers": {
+    "prestashop-dwc": {
+      "url": "https://your-shop.tld/module/dwcprestamcp/mcp",
+      "headers": { "Authorization": "Bearer YOUR_TOKEN" }
+    }
+  }
 }
 ```
 
-Mark tools that only read data with `readOnlyHint: true`. Tools that create,
-update or delete data must set `readOnlyHint: false` and, when relevant,
-`destructiveHint: true`.
+### Local (STDIO) — Claude Desktop on the same machine
 
-### Local dev setup (static analysis)
-
-The MCP attribute classes exist only at runtime (inside `ps_mcp_server`). For
-IDE autocompletion and PHPStan, install the official **stubs** as a dev
-dependency:
-
-```bash
-composer install
-composer exec phpstan analyse
+```json
+{
+  "mcpServers": {
+    "prestashop-dwc-local": {
+      "command": "php",
+      "args": ["/absolute/path/modules/dwcprestamcp/bin/mcp-stdio.php"]
+    }
+  }
+}
 ```
 
-`composer.json` already declares `prestashop/ps-mcp-server-stubs` under
-`require-dev`, and `phpstan.neon.dist` points PHPStan at them.
+## Included tools
 
-## Contributing
+| Tool name                    | Type      | Description                                                        |
+|------------------------------|-----------|-------------------------------------------------------------------|
+| `dwc_get_store_info`         | read-only | Basic store info: name, PS/PHP version, language, currency.       |
+| `dwc_get_low_stock_products` | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev
-setup, how to add a tool, and the `readOnlyHint` / `destructiveHint`
-convention. In short: keep tools small and single-purpose, document them with
-clear descriptions (the AI relies on them), and always set the correct
-read-only / destructive hints. CI runs `php -l` and PHPStan on every PR.
+## Security
+
+- Access is protected by a **Bearer token** (regenerate it anytime from the
+  config page). Keep it secret — anyone with it can call your tools.
+- The HTTP endpoint enforces **DNS-rebinding protection** (host allowlist from
+  your shop's configured domains) and CORS.
+- Always serve it over **HTTPS** in production.
+- All bundled tools are **read-only**. Add write tools deliberately, with the
+  correct `destructiveHint` (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+
+## Architecture
+
+```
+AI client ──HTTP(S)+Bearer──▶ controllers/front/mcp.php
+                                    │  (auth, PSR-7, middleware)
+                                    ▼
+                         Mcp\Server (mcp/sdk, Apache-2.0)
+                                    │  discovers #[McpTool] in src/Tools
+                                    ▼
+                         DWC\PrestaMcp\Tools\* ──▶ PrestaShop data
+```
+
+## Develop your own tools
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). In short: drop a class in `src/Tools/`
+with a public method annotated `#[McpTool]`; it is discovered automatically.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). Bundled dependency `mcp/sdk` is Apache-2.0.

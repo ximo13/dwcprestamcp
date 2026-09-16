@@ -1,123 +1,133 @@
 <?php
 /**
- * DWC PrestaShop MCP - Custom MCP tools for PrestaShop.
+ * DWC PrestaShop MCP - Standalone MCP server for PrestaShop.
  *
  * @author    DWC
  * @license   MIT
  *
- * This module declares custom MCP (Model Context Protocol) tools, prompts and
- * resources that are discovered and exposed by the official `ps_mcp_server`
- * module. It is an independent, community project (not affiliated with
- * PrestaShop SA) and requires `ps_mcp_server` to be installed and active to
- * actually serve its tools to an AI agent.
+ * This module embeds its own MCP (Model Context Protocol) server, powered by the
+ * open-source mcp/sdk (Apache-2.0). It exposes your store to AI agents over its
+ * own authenticated HTTP endpoint and does NOT depend on the official
+ * ps_mcp_server module. Independent community project, not affiliated with
+ * PrestaShop SA.
  */
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+// Load the bundled MCP SDK and this module's classes, if installed.
+$dwcAutoload = __DIR__ . '/vendor/autoload.php';
+if (is_file($dwcAutoload)) {
+    require_once $dwcAutoload;
+}
+
 class Dwcprestamcp extends Module
 {
+    /** @var string Configuration key holding the Bearer token. */
+    public const TOKEN_KEY = 'DWCPRESTAMCP_TOKEN';
+
     public function __construct()
     {
         $this->name = 'dwcprestamcp';
         $this->tab = 'administration';
-        $this->version = '1.0.0';
+        $this->version = '2.0.0';
         $this->author = 'DWC';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '8.2.0', 'max' => _PS_VERSION_];
         $this->bootstrap = true;
 
-        // Register a lightweight PSR-4 autoloader for this module's tool classes
-        // (namespace DWC\PrestaMcp\ => src/). The MCP server autoloads tool
-        // classes via class_exists(..., true) during discovery, and it
-        // instantiates each module (running this constructor) beforehand, so
-        // registering here is enough for discovery and tool execution.
-        self::registerAutoload();
-
         parent::__construct();
 
         $this->displayName = $this->trans('DWC PrestaShop MCP', [], 'Modules.Dwcprestamcp.Admin');
         $this->description = $this->trans(
-            'Custom MCP tools for PrestaShop, discovered by ps_mcp_server.',
+            'Standalone MCP server: expose your store to AI agents over its own authenticated endpoint.',
             [],
             'Modules.Dwcprestamcp.Admin'
         );
         $this->confirmUninstall = $this->trans(
-            'Are you sure you want to uninstall DWC PrestaShop MCP?',
+            'Are you sure? This will remove the MCP endpoint and its access token.',
             [],
             'Modules.Dwcprestamcp.Admin'
         );
     }
 
-    /**
-     * Register a minimal PSR-4 autoloader for the DWC\PrestaMcp\ namespace.
-     */
-    public static function registerAutoload(): void
-    {
-        static $registered = false;
-        if ($registered) {
-            return;
-        }
-        $registered = true;
-
-        $prefix = 'DWC\\PrestaMcp\\';
-        $baseDir = __DIR__ . '/src/';
-
-        spl_autoload_register(static function (string $class) use ($prefix, $baseDir): void {
-            if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
-                return;
-            }
-            $relative = substr($class, strlen($prefix));
-            $file = $baseDir . str_replace('\\', '/', $relative) . '.php';
-            if (is_file($file)) {
-                require $file;
-            }
-        });
-    }
-
     public function install(): bool
     {
-        return parent::install();
+        return parent::install()
+            && $this->regenerateToken();
     }
 
     public function uninstall(): bool
     {
+        Configuration::deleteByName(self::TOKEN_KEY);
+
         return parent::uninstall();
     }
 
     /**
-     * Contract used by the official ps_mcp_server module to detect modules that
-     * expose MCP tools/prompts/resources. Returning true makes ps_mcp_server
-     * scan this module's src/ directory for #[PsMcpTool] & co. attributes.
+     * Generate a new random Bearer token and store it.
      */
-    public function isMcpCompliant(): bool
+    public function regenerateToken(): bool
     {
-        return true;
+        try {
+            $token = bin2hex(random_bytes(32));
+        } catch (\Exception $e) {
+            $token = hash('sha256', uniqid((string) mt_rand(), true) . microtime());
+        }
+
+        return (bool) Configuration::updateValue(self::TOKEN_KEY, $token);
     }
 
     /**
-     * Simple settings screen that tells the merchant whether ps_mcp_server is
-     * present, since this module is useless without it.
+     * Absolute URL of the MCP HTTP endpoint (the URL to give an MCP client).
+     */
+    public function getEndpointUrl(): string
+    {
+        return $this->context->link->getModuleLink($this->name, 'mcp', [], true);
+    }
+
+    /**
+     * Module configuration page: endpoint URL, token, and a client snippet.
      */
     public function getContent(): string
     {
-        $serverInstalled = (bool) Module::isInstalled('ps_mcp_server');
-        $serverEnabled = (bool) Module::isEnabled('ps_mcp_server');
+        $output = '';
 
-        if ($serverInstalled && $serverEnabled) {
-            $msg = $this->trans(
-                'ps_mcp_server is installed and enabled. Open the MCP Server configuration and run a discovery to expose the tools declared by this module.',
-                [],
-                'Modules.Dwcprestamcp.Admin'
-            );
-
-            return $this->displayConfirmation($msg);
+        if (Tools::isSubmit('submitDwcRegenerateToken')) {
+            if ($this->regenerateToken()) {
+                $output .= $this->displayConfirmation($this->trans('A new token has been generated.', [], 'Modules.Dwcprestamcp.Admin'));
+            } else {
+                $output .= $this->displayError($this->trans('Could not generate a new token.', [], 'Modules.Dwcprestamcp.Admin'));
+            }
         }
 
-        return $this->displayWarning($this->trans(
-            'The official "ps_mcp_server" module must be installed and enabled for this module\'s tools to be served.',
-            [],
-            'Modules.Dwcprestamcp.Admin'
-        ));
+        if (!is_file(__DIR__ . '/vendor/autoload.php')) {
+            $output .= $this->displayWarning($this->trans(
+                'MCP dependencies are missing. Run "composer install" inside modules/dwcprestamcp before using the endpoint.',
+                [],
+                'Modules.Dwcprestamcp.Admin'
+            ));
+        }
+
+        $endpoint = $this->getEndpointUrl();
+        $token = (string) Configuration::get(self::TOKEN_KEY);
+
+        $clientSnippet = json_encode([
+            'mcpServers' => [
+                'prestashop-dwc' => [
+                    'url' => $endpoint,
+                    'headers' => ['Authorization' => 'Bearer ' . $token],
+                ],
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        $this->context->smarty->assign([
+            'dwc_endpoint' => $endpoint,
+            'dwc_token' => $token,
+            'dwc_client_snippet' => $clientSnippet,
+            'dwc_regenerate_action' => AdminController::$currentIndex . '&configure=' . $this->name . '&token=' . Tools::getAdminTokenLite('AdminModules'),
+        ]);
+
+        return $output . $this->display(__FILE__, 'views/templates/admin/configure.tpl');
     }
 }

@@ -8,8 +8,8 @@
 
 namespace DWC\PrestaMcp\Tools;
 
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpTool;
-use PrestaShop\Module\PsMcpServer\Server\Attributes\PsMcpToolAnnotations;
+use Mcp\Capability\Attribute\McpTool;
+use Mcp\Schema\ToolAnnotations;
 
 /**
  * Read-only tools that expose basic information about the PrestaShop store.
@@ -26,11 +26,11 @@ class StoreInfoTool
      *
      * @return array<string, string> Key/value pairs describing the store.
      */
-    #[PsMcpTool(
+    #[McpTool(
         name: 'dwc_get_store_info',
         title: 'Get store info',
         description: 'Returns basic, non-sensitive information about the PrestaShop store (name, versions, default language and currency).',
-        annotations: new PsMcpToolAnnotations(
+        annotations: new ToolAnnotations(
             title: 'Get store info',
             readOnlyHint: true,
             destructiveHint: false,
