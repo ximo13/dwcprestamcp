@@ -1,0 +1,26 @@
+{
+    "name": "dwc/dwcprestamcp",
+    "description": "Custom MCP (Model Context Protocol) tools for PrestaShop, discovered by the official ps_mcp_server module.",
+    "type": "prestashop-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "DWC"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DWC\\PrestaMcp\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "prestashop/ps-mcp-server-stubs": "*",
+        "phpstan/phpstan": "^1.10"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

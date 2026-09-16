@@ -1,0 +1,21 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    # The MCP attribute classes (PrestaShop\Module\PsMcpServer\Server\Attributes\*)
+    # only exist at runtime, provided by the ps_mcp_server module. The stubs
+    # package supplies their signatures for static analysis without needing the
+    # full module or the mcp/sdk. Installed via: composer install (require-dev).
+    scanDirectories:
+        - vendor/prestashop/ps-mcp-server-stubs
+    bootstrapFiles:
+        - tests/bootstrap.php
+    ignoreErrors:
+        # Known limitation of ps-mcp-server-stubs: PsMcpTool::__construct types
+        # $annotations as \Mcp\Schema\ToolAnnotations, and the stubbed
+        # PsMcpToolAnnotations does not declare that parent. At runtime the real
+        # PsMcpToolAnnotations DOES extend ToolAnnotations and is the public
+        # class third-party modules are meant to pass, so this is correct.
+        -
+            message: '#Parameter \$annotations of attribute class .*PsMcpTool constructor expects .*ToolAnnotations\|null, .*PsMcpToolAnnotations given\.#'
+            path: src/Tools/*.php
