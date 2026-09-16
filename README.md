@@ -1,5 +1,7 @@
 # DWC PrestaShop MCP (`dwcprestamcp`)
 
+[![CI](https://github.com/ximo13/dwcprestamcp/actions/workflows/ci.yml/badge.svg)](https://github.com/ximo13/dwcprestamcp/actions/workflows/ci.yml)
+
 Custom **MCP (Model Context Protocol)** tools for PrestaShop, community-made and
 open source. This module declares tools, prompts and resources that are
 **discovered and served by the official [`ps_mcp_server`](https://addons.prestashop.com/) module**,
@@ -40,9 +42,10 @@ This module:
 
 ## Included tools
 
-| Tool name           | Type      | Description                                              |
-|---------------------|-----------|----------------------------------------------------------|
-| `dwc_get_store_info`| read-only | Basic store info: name, PS/PHP version, language, currency. |
+| Tool name                   | Type      | Description                                                        |
+|-----------------------------|-----------|-------------------------------------------------------------------|
+| `dwc_get_store_info`        | read-only | Basic store info: name, PS/PHP version, language, currency.       |
+| `dwc_get_low_stock_products`| read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
 
 ## Develop your own tools
 
@@ -84,9 +87,11 @@ composer exec phpstan analyse
 
 ## Contributing
 
-Contributions are welcome. Open an issue or a pull request. Keep tools small
-and single-purpose, document them with clear descriptions (the AI relies on
-them), and always set the correct read-only / destructive hints.
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for the dev
+setup, how to add a tool, and the `readOnlyHint` / `destructiveHint`
+convention. In short: keep tools small and single-purpose, document them with
+clear descriptions (the AI relies on them), and always set the correct
+read-only / destructive hints. CI runs `php -l` and PHPStan on every PR.
 
 ## License
 

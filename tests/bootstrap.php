@@ -12,6 +12,10 @@ if (!defined('_PS_VERSION_')) {
     define('_PS_VERSION_', '9.0.0');
 }
 
+if (!defined('_DB_PREFIX_')) {
+    define('_DB_PREFIX_', 'ps_');
+}
+
 if (!class_exists('Configuration', false)) {
     class Configuration
     {
@@ -26,7 +30,34 @@ if (!class_exists('Configuration', false)) {
 if (!class_exists('Language', false)) {
     class Language
     {
+        public int $id = 0;
+
         public string $iso_code = '';
+    }
+}
+
+if (!class_exists('Shop', false)) {
+    class Shop
+    {
+        public int $id = 0;
+    }
+}
+
+if (!class_exists('Db', false)) {
+    class Db
+    {
+        public static function getInstance(): Db
+        {
+            return new self();
+        }
+
+        /**
+         * @return array<int, array<string, string>>|false
+         */
+        public function executeS(string $sql)
+        {
+            return [];
+        }
     }
 }
 
@@ -43,6 +74,8 @@ if (!class_exists('Context', false)) {
         public ?Language $language = null;
 
         public ?Currency $currency = null;
+
+        public ?Shop $shop = null;
 
         public static function getContext(): ?Context
         {
