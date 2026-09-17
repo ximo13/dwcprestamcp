@@ -1,0 +1,38 @@
+# DWC PrestaShop MCP — module .htaccess
+#
+# Ships with the module so the MCP endpoint works "install and go", without
+# editing the shop's root .htaccess or contacting the host.
+
+# Keep every PHP file in this folder private by default...
+<FilesMatch "\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ...except the MCP HTTP endpoint, which is protected by the module's own
+# Bearer-token authentication.
+<Files "mcp.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+
+# Exempt this endpoint from ModSecurity/WAF rules that block cookieless or
+# referer-less POST requests (common on LiteSpeed/OVH shared hosting). Only
+# mcp.php is reachable in this directory, so the store's overall security is
+# unaffected — and the endpoint still requires a valid Bearer token.
+<IfModule mod_security2.c>
+    SecRuleEngine Off
+</IfModule>
+<IfModule mod_security.c>
+    SecRuleEngine Off
+</IfModule>

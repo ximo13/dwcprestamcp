@@ -49,12 +49,14 @@ The config page shows a ready-to-paste snippet, e.g.:
 {
   "mcpServers": {
     "prestashop-dwc": {
-      "url": "https://your-shop.tld/module/dwcprestamcp/mcp",
+      "url": "https://your-shop.tld/modules/dwcprestamcp/mcp.php",
       "headers": { "Authorization": "Bearer YOUR_TOKEN" }
     }
   }
 }
 ```
+
+The exact endpoint URL is shown on the module's configuration page.
 
 ### Local (STDIO) — Claude Desktop on the same machine
 
@@ -89,7 +91,10 @@ The config page shows a ready-to-paste snippet, e.g.:
 ## Architecture
 
 ```
-AI client ──HTTP(S)+Bearer──▶ controllers/front/mcp.php
+AI client ──HTTP(S)+Bearer──▶ modules/dwcprestamcp/mcp.php   (physical endpoint)
+                                    │  (own .htaccess: allow + WAF exempt)
+                                    ▼
+                         DWC\PrestaMcp\Http\McpHttpHandler
                                     │  (auth, PSR-7, middleware)
                                     ▼
                          Mcp\Server (mcp/sdk, Apache-2.0)
@@ -97,6 +102,13 @@ AI client ──HTTP(S)+Bearer──▶ controllers/front/mcp.php
                                     ▼
                          DWC\PrestaMcp\Tools\* ──▶ PrestaShop data
 ```
+
+The same handler is also reachable via the friendly URL
+`/module/dwcprestamcp/mcp` (front controller), but the physical `mcp.php` is the
+recommended endpoint: it ships its own `.htaccess` that grants access to just
+that file and exempts it from ModSecurity/WAF rules which, on some hosts
+(LiteSpeed/OVH), block API POSTs lacking a Referer/Cookie. The endpoint stays
+protected by the Bearer token.
 
 ## Develop your own tools
 

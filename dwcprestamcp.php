@@ -30,7 +30,7 @@ class Dwcprestamcp extends Module
     {
         $this->name = 'dwcprestamcp';
         $this->tab = 'administration';
-        $this->version = '2.0.0';
+        $this->version = '2.1.0';
         $this->author = 'DWC';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '8.2.0', 'max' => _PS_VERSION_];
@@ -80,9 +80,19 @@ class Dwcprestamcp extends Module
 
     /**
      * Absolute URL of the MCP HTTP endpoint (the URL to give an MCP client).
+     *
+     * Uses the physical endpoint file (modules/dwcprestamcp/mcp.php), which
+     * ships its own .htaccess to survive WAF rules that block the friendly-URL
+     * dispatcher on some hosts. Falls back to the friendly URL if the shop
+     * context is unavailable.
      */
     public function getEndpointUrl(): string
     {
+        $shop = $this->context->shop;
+        if ($shop !== null) {
+            return $shop->getBaseURL(true, true) . 'modules/' . $this->name . '/mcp.php';
+        }
+
         return $this->context->link->getModuleLink($this->name, 'mcp', [], true);
     }
 

@@ -16,6 +16,20 @@ if (!defined('_DB_PREFIX_')) {
     define('_DB_PREFIX_', 'ps_');
 }
 
+if (!defined('_PS_CACHE_DIR_')) {
+    define('_PS_CACHE_DIR_', sys_get_temp_dir() . '/');
+}
+
+if (!class_exists('Tools', false)) {
+    class Tools
+    {
+        public static function getHttpHost(bool $http = false, bool $entities = false): string
+        {
+            return '';
+        }
+    }
+}
+
 if (!class_exists('Configuration', false)) {
     class Configuration
     {
