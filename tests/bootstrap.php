@@ -47,6 +47,47 @@ if (!class_exists('Language', false)) {
         public int $id = 0;
 
         public string $iso_code = '';
+
+        /**
+         * @return array<int, array<string, mixed>>
+         */
+        public static function getLanguages(bool $active = true): array
+        {
+            return [];
+        }
+    }
+}
+
+if (!class_exists('Validate', false)) {
+    class Validate
+    {
+        public static function isLoadedObject(mixed $object): bool
+        {
+            return true;
+        }
+    }
+}
+
+if (!class_exists('Product', false)) {
+    class Product
+    {
+        /** @var array<int, string> */
+        public array $name = [];
+
+        public float $price = 0.0;
+
+        public int|bool $active = 0;
+
+        public string $reference = '';
+
+        public function __construct(?int $id = null, bool $full = false, ?int $idLang = null)
+        {
+        }
+
+        public function save(): bool
+        {
+            return true;
+        }
     }
 }
 

@@ -35,6 +35,6 @@ if (!is_file($autoload)) {
 require_once $autoload;
 
 $module = Module::getInstanceByName('dwcprestamcp');
-$version = ($module instanceof Module) ? (string) $module->version : '2.1.0';
+$version = ($module instanceof Module) ? (string) $module->version : '2.2.0';
 
 DWC\PrestaMcp\Http\McpHttpHandler::handle($moduleDir, $version);
