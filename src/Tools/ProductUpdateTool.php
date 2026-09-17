@@ -29,13 +29,16 @@ class ProductUpdateTool
      * @param bool|null   $active     Publish (true) or hide (false) the product. Null = unchanged.
      * @param string|null $name       New product name (applied to all languages). Null = unchanged.
      * @param string|null $reference  New reference / SKU. Null = unchanged.
+     * @param float|null  $weight     New weight (store's unit). Null = unchanged.
+     * @param bool|null   $on_sale    Mark the product as on sale / discounted. Null = unchanged.
+     * @param int|null    $quantity   New available stock quantity for the base product. Null = unchanged.
      *
      * @return array<string, mixed> Result with success flag, the applied changes, and a message.
      */
     #[McpTool(
         name: 'dwc_update_product',
         title: 'Update product',
-        description: 'Updates an existing product. Only provided fields change (price, active status, name, reference). Modifies live store data.',
+        description: 'Updates an existing product. Only provided fields change: price, active status, name, reference, weight, on-sale flag and stock quantity. Modifies live store data.',
         annotations: new ToolAnnotations(
             title: 'Update product',
             readOnlyHint: false,
@@ -53,7 +56,12 @@ class ProductUpdateTool
         #[Schema(type: 'string', minLength: 1, maxLength: 128)]
         ?string $name = null,
         #[Schema(type: 'string', maxLength: 64)]
-        ?string $reference = null
+        ?string $reference = null,
+        #[Schema(type: 'number', minimum: 0)]
+        ?float $weight = null,
+        ?bool $on_sale = null,
+        #[Schema(type: 'integer', minimum: 0)]
+        ?int $quantity = null
     ): array {
         $product = new \Product((int) $id_product);
         if (!\Validate::isLoadedObject($product)) {
@@ -83,6 +91,19 @@ class ProductUpdateTool
             $changes['reference'] = $reference;
         }
 
+        if ($weight !== null) {
+            if ($weight < 0) {
+                return ['success' => false, 'message' => 'Weight cannot be negative.'];
+            }
+            $product->weight = (float) $weight;
+            $changes['weight'] = (float) $weight;
+        }
+
+        if ($on_sale !== null) {
+            $product->on_sale = $on_sale ? 1 : 0;
+            $changes['on_sale'] = (bool) $on_sale;
+        }
+
         if ($name !== null) {
             $trimmed = trim($name);
             if ($trimmed === '') {
@@ -95,20 +116,37 @@ class ProductUpdateTool
             $changes['name'] = $trimmed;
         }
 
-        if ($changes === []) {
+        // Stock lives in a separate table (StockAvailable), not on the Product.
+        $stockRequested = ($quantity !== null);
+        if ($stockRequested && $quantity < 0) {
+            return ['success' => false, 'message' => 'Quantity cannot be negative.'];
+        }
+
+        if ($changes === [] && !$stockRequested) {
             return [
                 'success' => false,
-                'message' => 'Nothing to update: provide at least one of price, active, name or reference.',
+                'message' => 'Nothing to update: provide at least one of price, active, name, reference, weight, on_sale or quantity.',
             ];
         }
 
-        $saved = (bool) $product->save();
+        $productSaved = true;
+        if ($changes !== []) {
+            $productSaved = (bool) $product->save();
+        }
+
+        if ($stockRequested && $productSaved) {
+            // add_movement=false: no logged-in employee exists in an API request,
+            // and StockMvt logging requires one. We set the absolute quantity
+            // without writing a stock-movement audit row.
+            \StockAvailable::setQuantity((int) $id_product, 0, (int) $quantity, null, false);
+            $changes['quantity'] = (int) $quantity;
+        }
 
         return [
-            'success' => $saved,
+            'success' => $productSaved,
             'id_product' => (int) $id_product,
             'changed' => $changes,
-            'message' => $saved
+            'message' => $productSaved
                 ? sprintf('Product %d updated.', $id_product)
                 : sprintf('Could not save product %d.', $id_product),
         ];

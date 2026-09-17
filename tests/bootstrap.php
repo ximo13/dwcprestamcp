@@ -80,6 +80,10 @@ if (!class_exists('Product', false)) {
 
         public string $reference = '';
 
+        public float $weight = 0.0;
+
+        public int|bool $on_sale = 0;
+
         public function __construct(?int $id = null, bool $full = false, ?int $idLang = null)
         {
         }
@@ -87,6 +91,15 @@ if (!class_exists('Product', false)) {
         public function save(): bool
         {
             return true;
+        }
+    }
+}
+
+if (!class_exists('StockAvailable', false)) {
+    class StockAvailable
+    {
+        public static function setQuantity(int $idProduct, int $idProductAttribute, int $quantity, ?int $idShop = null, bool $addMovement = true): void
+        {
         }
     }
 }

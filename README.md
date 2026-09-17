@@ -77,7 +77,7 @@ The exact endpoint URL is shown on the module's configuration page.
 |------------------------------|-----------|-------------------------------------------------------------------|
 | `dwc_get_store_info`         | read-only | Basic store info: name, PS/PHP version, language, currency.       |
 | `dwc_get_low_stock_products` | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
-| `dwc_update_product`         | **write** | Update an existing product: price, active status, name, reference (only provided fields change). |
+| `dwc_update_product`         | **write** | Update an existing product: price, active, name, reference, weight, on-sale flag, stock quantity (only provided fields change). |
 
 ## Security
 
