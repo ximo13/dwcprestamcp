@@ -34,7 +34,8 @@
         color: #fff; margin-left: 4px; vertical-align: middle;
     }
     .dwc-manual .dwc-toc-badge.read { background: #5cb85c; }
-    .dwc-manual .dwc-toc-badge.write { background: #d9534f; }
+    .dwc-manual .dwc-toc-badge.write { background: #f0ad4e; color: #333; }
+    .dwc-manual .dwc-toc-badge.delete { background: #d9534f; }
 
     .dwc-manual .dwc-content { flex: 1 1 auto; max-width: 900px; }
     .dwc-manual .dwc-section {
@@ -50,8 +51,9 @@
     }
     .dwc-manual code { color: #c7254e; background: #f9f2f4; padding: 1px 4px; border-radius: 3px; }
     .dwc-manual pre code { color: inherit; background: none; padding: 0; }
-    .dwc-manual .label-write { background-color: #d9534f; }
+    .dwc-manual .label-write { background-color: #f0ad4e; color: #333; }
     .dwc-manual .label-read { background-color: #5cb85c; }
+    .dwc-manual .label-delete { background-color: #d9534f; }
     .dwc-manual .dwc-example {
         background: #f0f8ff; border-left: 4px solid #25b9d7;
         padding: 10px 14px; margin: 12px 0; border-radius: 0 4px 4px 0;
