@@ -89,7 +89,22 @@
                     <li><a href="#dwc-cat-productos"><strong>Productos</strong></a>
                         <ol class="dwc-toc-sub">
                             <li><a href="#dwc-tool-low-stock">Ver productos con stock bajo <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-search-products">Buscar un producto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-product-stock">Ver el stock de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-product">Actualizar un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#dwc-cat-pedidos"><strong>Pedidos y ventas</strong></a>
+                        <ol class="dwc-toc-sub">
+                            <li><a href="#dwc-tool-orders-by-status">Ver pedidos por estado <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-sales-range">Ver ventas por fechas <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-top-selling">Ver los más vendidos <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-abandoned-carts">Ver carritos abandonados <span class="dwc-toc-badge read">consulta</span></a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#dwc-cat-clientes"><strong>Clientes</strong></a>
+                        <ol class="dwc-toc-sub">
+                            <li><a href="#dwc-tool-customers">Buscar o listar clientes <span class="dwc-toc-badge read">consulta</span></a></li>
                         </ol>
                     </li>
                 </ol>
@@ -295,6 +310,31 @@ composer install --no-dev</code></pre>
                 </div>
             </div>
 
+            <!-- ---------- Buscar un producto ---------- -->
+            <div id="dwc-tool-search-products" style="padding-top: 25px;">
+                <h5>Buscar un producto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Busca productos por <strong>nombre</strong> o <strong>referencia</strong> y muestra su precio, stock y si está publicado. Útil para encontrar el ID de un producto antes de actualizarlo.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Busca el producto &lsquo;musk&rsquo;.&rdquo;</p>
+                    <p>&ldquo;¿Qué productos tengo con la palabra &lsquo;vela&rsquo;?&rdquo;</p>
+                    <p>&ldquo;Busca la referencia D-244165.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver el stock de un producto ---------- -->
+            <div id="dwc-tool-product-stock" style="padding-top: 25px;">
+                <h5>Ver el stock de un producto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Muestra las existencias de un producto. Si tiene <strong>combinaciones</strong> (tallas, colores…), desglosa el stock de cada una. Necesita el ID del producto.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Cuánto stock tiene el producto 123?&rdquo;</p>
+                    <p>&ldquo;Dame el stock por tallas del producto 123.&rdquo;</p>
+                </div>
+            </div>
+
             <!-- ---------- Actualizar un producto ---------- -->
             <div id="dwc-tool-update-product" style="padding-top: 25px;">
                 <h5>Actualizar un producto &nbsp;<span class="label label-write">modifica</span></h5>
@@ -349,6 +389,80 @@ composer install --no-dev</code></pre>
                     <li>Si te equivocas al pedirlo, dile <em>&ldquo;deshaz&rdquo;</em> con el valor anterior y vuelve a lanzarlo (por ejemplo, <em>&ldquo;vuelve a poner el precio del producto 123 en 12,50&rdquo;</em>).</li>
                     <li>El asistente no puede borrar productos ni tocar los pedidos: solo modifica los campos indicados arriba.</li>
                 </ul>
+            </div>
+
+            <!-- ==================== Categoría: Pedidos y ventas ==================== -->
+            <h5 id="dwc-cat-pedidos" style="margin-top: 35px; color: #25b9d7; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">
+                <i class="icon icon-shopping-cart"></i> Pedidos y ventas
+            </h5>
+
+            <!-- ---------- Ver pedidos por estado ---------- -->
+            <div id="dwc-tool-orders-by-status" style="padding-top: 10px;">
+                <h5>Ver pedidos por estado &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista los pedidos recientes. Puedes filtrar por su <strong>estado</strong> (pendiente de pago, enviado, entregado…) para ver solo los que te interesan. Muestra referencia, cliente, total y estado.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué pedidos tengo pendientes de pago?&rdquo;</p>
+                    <p>&ldquo;Enséñame los últimos pedidos enviados.&rdquo;</p>
+                    <p>&ldquo;Dame los 10 pedidos más recientes.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver ventas por fechas ---------- -->
+            <div id="dwc-tool-sales-range" style="padding-top: 25px;">
+                <h5>Ver ventas por fechas &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Resumen de ventas de un periodo: <strong>total facturado</strong>, <strong>número de pedidos</strong> y <strong>ticket medio</strong>. Por defecto cuenta solo pedidos válidos (pagados).</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Cuánto he facturado del 1 al 30 de septiembre?&rdquo;</p>
+                    <p>&ldquo;Ventas de este mes.&rdquo;</p>
+                    <p>&ldquo;¿Cuál fue mi ticket medio la semana pasada?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver los más vendidos ---------- -->
+            <div id="dwc-tool-top-selling" style="padding-top: 25px;">
+                <h5>Ver los productos más vendidos &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista los productos que más se han vendido (por unidades) en un periodo, con la cantidad vendida y los ingresos de cada uno. Útil para saber qué funciona mejor.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Cuáles son mis 5 productos más vendidos?&rdquo;</p>
+                    <p>&ldquo;Top 10 de ventas de septiembre.&rdquo;</p>
+                    <p>&ldquo;¿Qué se ha vendido más este mes?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver carritos abandonados ---------- -->
+            <div id="dwc-tool-abandoned-carts" style="padding-top: 25px;">
+                <h5>Ver carritos abandonados &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Muestra los carritos que tienen productos pero <strong>no llegaron a convertirse en pedido</strong>, dentro de los últimos días que indiques (por defecto, 7). Incluye el cliente y cuántos artículos dejó.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Tengo carritos abandonados esta semana?&rdquo;</p>
+                    <p>&ldquo;Carritos abandonados de los últimos 30 días.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ==================== Categoría: Clientes ==================== -->
+            <h5 id="dwc-cat-clientes" style="margin-top: 35px; color: #25b9d7; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">
+                <i class="icon icon-user"></i> Clientes
+            </h5>
+
+            <!-- ---------- Buscar o listar clientes ---------- -->
+            <div id="dwc-tool-customers" style="padding-top: 10px;">
+                <h5>Buscar o listar clientes &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Busca clientes por <strong>email</strong>, o lista los <strong>registrados más recientemente</strong>. Muestra nombre, email, fecha de registro y si están activos.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Busca al cliente con email juan@ejemplo.com.&rdquo;</p>
+                    <p>&ldquo;¿Quiénes son mis últimos clientes registrados?&rdquo;</p>
+                    <p>&ldquo;Dame los 20 clientes más recientes.&rdquo;</p>
+                </div>
             </div>
 
             <!-- Aquí se añadirán nuevas acciones conforme se habiliten. -->
