@@ -84,7 +84,11 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_get_top_selling_products`| read-only | Best-selling products by quantity in a period.                    |
 | `dwc_get_customers`           | read-only | Search customers by email or list the most recent.                |
 | `dwc_get_abandoned_carts`     | read-only | Carts with products but no order, within the last N days.         |
+| `dwc_get_products_missing_content` | read-only | Products whose short/long description or meta is empty or too short (content/SEO audit). |
+| `dwc_get_product_content`     | read-only | A product's descriptions and SEO meta (with lengths) for review/improvement. |
 | `dwc_update_product`          | **write** | Update a product: price, active, name, reference, weight, on-sale, stock (only provided fields change). |
+| `dwc_update_product_description` | **write** | Update a product's short and/or long description (default language). |
+| `dwc_update_product_meta`     | **write** | Update a product's SEO meta title and/or meta description (default language). |
 
 ## Security
 

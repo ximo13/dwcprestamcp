@@ -91,6 +91,18 @@ if (!class_exists('Product', false)) {
 
         public int|bool $on_sale = 0;
 
+        /** @var array<int, string> */
+        public array $description = [];
+
+        /** @var array<int, string> */
+        public array $description_short = [];
+
+        /** @var array<int, string> */
+        public array $meta_title = [];
+
+        /** @var array<int, string> */
+        public array $meta_description = [];
+
         public function __construct(?int $id = null, bool $full = false, ?int $idLang = null)
         {
         }

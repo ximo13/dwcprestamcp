@@ -107,6 +107,14 @@
                             <li><a href="#dwc-tool-customers">Buscar o listar clientes <span class="dwc-toc-badge read">consulta</span></a></li>
                         </ol>
                     </li>
+                    <li><a href="#dwc-cat-contenido"><strong>Contenido y SEO</strong></a>
+                        <ol class="dwc-toc-sub">
+                            <li><a href="#dwc-tool-missing-content">Detectar contenido incompleto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-product-content">Ver el contenido de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-update-description">Mejorar la descripción <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-meta">Mejorar el SEO (meta) <span class="dwc-toc-badge write">modifica</span></a></li>
+                        </ol>
+                    </li>
                 </ol>
             </li>
             <!-- Nuevas secciones se añaden aquí conforme se habiliten funcionalidades. -->
@@ -462,6 +470,61 @@ composer install --no-dev</code></pre>
                     <p>&ldquo;Busca al cliente con email juan@ejemplo.com.&rdquo;</p>
                     <p>&ldquo;¿Quiénes son mis últimos clientes registrados?&rdquo;</p>
                     <p>&ldquo;Dame los 20 clientes más recientes.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ==================== Categoría: Contenido y SEO ==================== -->
+            <h5 id="dwc-cat-contenido" style="margin-top: 35px; color: #25b9d7; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">
+                <i class="icon icon-file-text"></i> Contenido y SEO
+            </h5>
+
+            <!-- ---------- Detectar contenido incompleto ---------- -->
+            <div id="dwc-tool-missing-content" style="padding-top: 10px;">
+                <h5>Detectar contenido incompleto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Audita el catálogo y lista los productos a los que les <strong>falta contenido</strong>: sin descripción corta, sin descripción larga, sin meta título o sin meta descripción. También puedes pedir los que la tienen <strong>demasiado corta</strong> (indicando un mínimo de caracteres).</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos no tienen descripción corta?&rdquo;</p>
+                    <p>&ldquo;Dame los productos sin meta descripción.&rdquo;</p>
+                    <p>&ldquo;¿Qué productos tienen una descripción muy pobre (menos de 100 caracteres)?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver el contenido de un producto ---------- -->
+            <div id="dwc-tool-product-content" style="padding-top: 25px;">
+                <h5>Ver el contenido de un producto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Muestra las <strong>descripciones</strong> (corta y larga) y el <strong>SEO</strong> (meta título y meta descripción) de un producto, con su longitud. Es el paso previo para que el asistente lo revise y te proponga mejoras.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Enséñame la descripción del producto 233.&rdquo;</p>
+                    <p>&ldquo;Revisa el contenido del producto 233 y dime cómo mejorarlo.&rdquo;</p>
+                    <p>&ldquo;¿El SEO del producto 233 está bien?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Mejorar la descripción ---------- -->
+            <div id="dwc-tool-update-description" style="padding-top: 25px;">
+                <h5>Mejorar la descripción &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Guarda una <strong>descripción corta y/o larga</strong> nueva para un producto (en el idioma por defecto). Lo normal es pedirle al asistente que la <em>redacte o mejore</em> y luego la aplique con tu visto bueno.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Mejora la descripción del producto 233 y aplícala.&rdquo;</p>
+                    <p>&ldquo;Escribe una descripción más vendedora para el 233 y guárdala.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Mejorar el SEO (meta) ---------- -->
+            <div id="dwc-tool-update-meta" style="padding-top: 25px;">
+                <h5>Mejorar el SEO (meta) &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Guarda el <strong>meta título</strong> y/o la <strong>meta descripción</strong> (lo que se ve en Google) de un producto. Ideal para pedirle al asistente que optimice el SEO y lo aplique.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Optimiza el SEO del producto 233 y guárdalo.&rdquo;</p>
+                    <p>&ldquo;Ponle una meta descripción de unos 150 caracteres al 233.&rdquo;</p>
                 </div>
             </div>
 
