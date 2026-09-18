@@ -75,9 +75,16 @@ The exact endpoint URL is shown on the module's configuration page.
 
 | Tool name                    | Type      | Description                                                        |
 |------------------------------|-----------|-------------------------------------------------------------------|
-| `dwc_get_store_info`         | read-only | Basic store info: name, PS/PHP version, language, currency.       |
-| `dwc_get_low_stock_products` | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
-| `dwc_update_product`         | **write** | Update an existing product: price, active, name, reference, weight, on-sale flag, stock quantity (only provided fields change). |
+| `dwc_get_store_info`          | read-only | Basic store info: name, PS/PHP version, language, currency.       |
+| `dwc_get_low_stock_products`  | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
+| `dwc_search_products`         | read-only | Search products by name or reference; price, stock, active status. |
+| `dwc_get_product_stock`       | read-only | Stock of a product, broken down by combination (size/colour).     |
+| `dwc_get_orders_by_status`    | read-only | Recent orders, optionally filtered by status name or state id.    |
+| `dwc_get_sales_by_date_range` | read-only | Revenue, order count and average order value for a date range.    |
+| `dwc_get_top_selling_products`| read-only | Best-selling products by quantity in a period.                    |
+| `dwc_get_customers`           | read-only | Search customers by email or list the most recent.                |
+| `dwc_get_abandoned_carts`     | read-only | Carts with products but no order, within the last N days.         |
+| `dwc_update_product`          | **write** | Update a product: price, active, name, reference, weight, on-sale, stock (only provided fields change). |
 
 ## Security
 

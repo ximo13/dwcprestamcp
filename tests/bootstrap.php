@@ -20,6 +20,13 @@ if (!defined('_PS_CACHE_DIR_')) {
     define('_PS_CACHE_DIR_', sys_get_temp_dir() . '/');
 }
 
+if (!function_exists('pSQL')) {
+    function pSQL(string $string, bool $htmlOK = false, bool $bqSQL = false): string
+    {
+        return $string;
+    }
+}
+
 if (!class_exists('Tools', false)) {
     class Tools
     {
