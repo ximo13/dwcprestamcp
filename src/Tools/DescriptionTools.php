@@ -97,21 +97,28 @@ class DescriptionTools
      * Get the full editable content of a product (short & long description,
      * meta title & meta description) so it can be reviewed and improved.
      *
-     * @param int $id_product The product ID.
+     * @param int         $id_product The product ID.
+     * @param string|null $language   Language ISO code (e.g. "en"). Null = default language.
      *
      * @return array<string, mixed>
      */
     #[McpTool(
         name: 'dwc_get_product_content',
         title: 'Get product content',
-        description: 'Returns a product\'s short description, long description, meta title and meta description (with their lengths) for review or improvement.',
+        description: 'Returns a product\'s short description, long description, meta title and meta description (with their lengths) for review or improvement, in the default language or the one given by its ISO code.',
         annotations: new ToolAnnotations(title: 'Get product content', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false)
     )]
     public function getProductContent(
         #[Schema(type: 'integer', minimum: 1)]
-        int $id_product
+        int $id_product,
+        #[Schema(type: 'string', minLength: 2, maxLength: 5)]
+        ?string $language = null
     ): array {
-        [$idLang, $idShop] = self::ctx();
+        [, $idShop] = self::ctx();
+        $idLang = ProductQueryTools::langId($language);
+        if ($idLang === null) {
+            return ['id_product' => (int) $id_product, 'found' => false, 'message' => sprintf('Language "%s" not found or inactive.', (string) $language)];
+        }
 
         $rows = \Db::getInstance()->executeS(
             'SELECT pl.name, pl.description_short, pl.description, pl.meta_title, pl.meta_description
@@ -133,6 +140,7 @@ class DescriptionTools
         return [
             'id_product' => (int) $id_product,
             'found' => true,
+            'id_lang' => $idLang,
             'name' => (string) $r['name'],
             'description_short' => (string) $r['description_short'],
             'description_short_length' => $len((string) $r['description_short']),

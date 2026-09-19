@@ -148,6 +148,21 @@ class ProductQueryTools
     }
 
     /**
+     * Resolve a language ISO code (e.g. "en") to an active language id.
+     * Null/empty = the context (default) language. Returns null when the code
+     * is unknown or the language is inactive.
+     */
+    public static function langId(?string $iso): ?int
+    {
+        if ($iso === null || trim($iso) === '') {
+            return self::ctx()[0];
+        }
+        $id = (int) \Language::getIdByIso(strtolower(trim($iso)), true);
+
+        return $id > 0 ? $id : null;
+    }
+
+    /**
      * @return array{0:int,1:int} [id_lang, id_shop]
      */
     public static function ctx(): array

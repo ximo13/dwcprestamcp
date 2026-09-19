@@ -193,7 +193,7 @@ Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 
 | Categoría | Herramienta | Tipo | Qué hace |
 |---|---|---|---|
-| Tienda | `dwc_get_store_info` | solo lectura | Datos básicos de la tienda: nombre, versión de PrestaShop/PHP, idioma y moneda por defecto. |
+| Tienda | `dwc_get_store_info` | solo lectura | Datos básicos de la tienda: nombre, versión de PrestaShop/PHP, idioma y moneda por defecto e idiomas activos. |
 | Productos | `dwc_get_low_stock_products` | solo lectura | Productos con stock igual o por debajo de un umbral. |
 | Productos | `dwc_search_products` | solo lectura | Busca productos por nombre o referencia; precio, stock y si está activo. |
 | Productos | `dwc_get_product_stock` | solo lectura | Stock de un producto, desglosado por combinación (talla, color…). |
@@ -203,11 +203,19 @@ Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 | Productos | `dwc_get_unavailable_products` | solo lectura | Productos desactivados, o activos con stock 0 (e indica si admiten pedidos sin stock). |
 | Productos | `dwc_get_products_with_catalog_issues` | solo lectura | Productos sin imagen, sin categoría (solo Inicio o ninguna) o sin EAN. |
 | Productos | `dwc_get_product_discounts` | solo lectura | Descuentos (precios específicos): reducción, fechas y restricciones; vigentes, programados o todos. |
+| Productos | `dwc_list_categories` | solo lectura | Categorías (o las que contengan un texto) con su categoría padre y número de productos. |
+| Productos | `dwc_list_brands` | solo lectura | Marcas (fabricantes) con su número de productos. |
 | Productos | `dwc_get_products_missing_content` | solo lectura | Productos con la descripción corta/larga o el meta título/descripción vacíos o demasiado cortos. |
-| Productos | `dwc_get_product_content` | solo lectura | Descripciones y meta SEO de un producto, con su longitud. |
+| Productos | `dwc_get_product_content` | solo lectura | Descripciones y meta SEO de un producto, con su longitud, en el idioma por defecto o en otro. |
 | Productos | `dwc_update_product` | **escritura** | Actualiza precio, activo, nombre, referencia, peso, `on_sale` y stock. Solo cambia los campos enviados. |
-| Productos | `dwc_update_product_description` | **escritura** | Actualiza la descripción corta y/o larga (idioma por defecto). |
-| Productos | `dwc_update_product_meta` | **escritura** | Actualiza el meta título y/o la meta descripción (idioma por defecto). |
+| Productos | `dwc_update_combination_stock` | **escritura** | Cambia el stock de una combinación (talla, color…); el total del producto se recalcula. |
+| Productos | `dwc_bulk_update_prices` | **escritura** | Sube o baja precios de una categoría y/o marca en % o importe. Primero devuelve una vista previa; solo aplica con `confirm=true`. |
+| Productos | `dwc_create_product_discount` | **escritura** | Crea un descuento (porcentaje o importe), opcionalmente entre dos fechas. |
+| Productos | `dwc_delete_product_discount` | **escritura** | Elimina un descuento (no los de reglas de precios del catálogo). |
+| Productos | `dwc_update_product_categories` | **escritura** | Añade o quita categorías de un producto y cambia su categoría principal. |
+| Productos | `dwc_set_product_brand` | **escritura** | Asigna o quita la marca de un producto. |
+| Productos | `dwc_update_product_description` | **escritura** | Actualiza la descripción corta y/o larga, en el idioma por defecto o en otro (`language`, código ISO). |
+| Productos | `dwc_update_product_meta` | **escritura** | Actualiza el meta título y/o la meta descripción, en el idioma por defecto o en otro (`language`, código ISO). |
 | Pedidos y ventas | `dwc_get_orders_by_status` | solo lectura | Pedidos recientes, opcionalmente filtrados por estado. |
 | Pedidos y ventas | `dwc_get_sales_by_date_range` | solo lectura | Facturación, número de pedidos y ticket medio de un periodo. |
 | Pedidos y ventas | `dwc_get_top_selling_products` | solo lectura | Productos más vendidos (por unidades) en un periodo. |

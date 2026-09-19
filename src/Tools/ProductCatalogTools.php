@@ -479,4 +479,104 @@ class ProductCatalogTools
 
         return ['threshold' => $threshold, 'total' => $total, 'returned' => count($out), 'combinations' => $out];
     }
+
+    /**
+     * List categories (optionally filtered by name) with their parent and
+     * number of products. Use it to find category ids.
+     *
+     * @param string|null $search Text to match in the category name. Null = all.
+     * @param int         $limit  Max categories (1-500). Defaults to 100.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    #[McpTool(
+        name: 'dwc_list_categories',
+        title: 'List categories',
+        description: 'Lists categories (optionally filtered by name) with id, parent, depth, active status and number of products. Use it to find category ids.',
+        annotations: new ToolAnnotations(title: 'List categories', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false)
+    )]
+    public function listCategories(
+        #[Schema(type: 'string', maxLength: 128)]
+        ?string $search = null,
+        #[Schema(type: 'integer', minimum: 1, maximum: 500)]
+        int $limit = 100
+    ): array {
+        $limit = min(500, max(1, $limit));
+        [$idLang, $idShop] = ProductQueryTools::ctx();
+        $root = (int) \Configuration::get('PS_ROOT_CATEGORY');
+
+        $rows = \Db::getInstance()->executeS(
+            'SELECT c.id_category, cl.name, c.id_parent, pcl.name AS parent_name, c.level_depth, c.active,
+                    (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'category_product` cp WHERE cp.id_category = c.id_category) AS products
+             FROM `' . _DB_PREFIX_ . 'category` c
+             INNER JOIN `' . _DB_PREFIX_ . 'category_lang` cl
+                ON cl.id_category = c.id_category AND cl.id_lang = ' . $idLang . ' AND cl.id_shop = ' . $idShop . '
+             LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` pcl
+                ON pcl.id_category = c.id_parent AND pcl.id_lang = ' . $idLang . ' AND pcl.id_shop = ' . $idShop . '
+             WHERE c.id_category <> ' . $root
+            . ($search !== null && trim($search) !== '' ? ' AND cl.name LIKE \'%' . pSQL(trim($search), true) . '%\'' : '') . '
+             ORDER BY c.nleft ASC
+             LIMIT ' . $limit
+        );
+
+        $out = [];
+        foreach (is_array($rows) ? $rows : [] as $r) {
+            $out[] = [
+                'id_category' => (int) $r['id_category'],
+                'name' => (string) $r['name'],
+                'id_parent' => (int) $r['id_parent'],
+                'parent' => (string) $r['parent_name'],
+                'depth' => (int) $r['level_depth'],
+                'active' => (bool) $r['active'],
+                'products' => (int) $r['products'],
+            ];
+        }
+
+        return $out;
+    }
+
+    /**
+     * List brands (manufacturers), optionally filtered by name, with their
+     * number of products. Use it to find brand ids.
+     *
+     * @param string|null $search Text to match in the brand name. Null = all.
+     * @param int         $limit  Max brands (1-500). Defaults to 100.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    #[McpTool(
+        name: 'dwc_list_brands',
+        title: 'List brands',
+        description: 'Lists brands (manufacturers), optionally filtered by name, with id, active status and number of products. Use it to find brand ids.',
+        annotations: new ToolAnnotations(title: 'List brands', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false)
+    )]
+    public function listBrands(
+        #[Schema(type: 'string', maxLength: 128)]
+        ?string $search = null,
+        #[Schema(type: 'integer', minimum: 1, maximum: 500)]
+        int $limit = 100
+    ): array {
+        $limit = min(500, max(1, $limit));
+
+        $rows = \Db::getInstance()->executeS(
+            'SELECT m.id_manufacturer, m.name, m.active,
+                    (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'product` p WHERE p.id_manufacturer = m.id_manufacturer) AS products
+             FROM `' . _DB_PREFIX_ . 'manufacturer` m'
+            . ($search !== null && trim($search) !== '' ? ' WHERE m.name LIKE \'%' . pSQL(trim($search), true) . '%\'' : '') . '
+             ORDER BY m.name ASC
+             LIMIT ' . $limit
+        );
+
+        $out = [];
+        foreach (is_array($rows) ? $rows : [] as $r) {
+            $out[] = [
+                'id_manufacturer' => (int) $r['id_manufacturer'],
+                'name' => (string) $r['name'],
+                'active' => (bool) $r['active'],
+                'products' => (int) $r['products'],
+            ];
+        }
+
+        return $out;
+    }
 }

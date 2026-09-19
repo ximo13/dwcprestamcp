@@ -99,7 +99,15 @@
                             <li><a href="#dwc-tool-unavailable-products">Ver productos no disponibles <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-catalog-issues">Detectar productos sin imagen, sin categoría o sin EAN <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-product-discounts">Ver descuentos de productos <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-list-categories">Ver las categorías <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-list-brands">Ver las marcas <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-product">Actualizar un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-combination-stock">Actualizar el stock de una combinación <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-bulk-update-prices">Cambiar precios en bloque <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-create-discount">Crear un descuento <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-delete-discount">Quitar un descuento <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-categories">Cambiar las categorías de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-set-brand">Cambiar la marca de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-missing-content">Detectar productos con descripciones incompletas <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-product-content">Ver las descripciones de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-description">Mejorar la descripción de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
@@ -293,7 +301,7 @@ composer install --no-dev</code></pre>
             <!-- ---------- Ver datos de la tienda ---------- -->
             <div id="dwc-tool-store-info" style="padding-top: 10px;">
                 <h5>Ver los datos de la tienda &nbsp;<span class="label label-read">consulta</span></h5>
-                <p>Muestra el nombre de la tienda, la versión de PrestaShop, el idioma y la moneda por defecto. Útil para comprobar rápidamente que el asistente está conectado a tu tienda.</p>
+                <p>Muestra el nombre de la tienda, la versión de PrestaShop, el idioma y la moneda por defecto y los idiomas activos. Útil para comprobar rápidamente que el asistente está conectado a tu tienda.</p>
 
                 <p><strong>Ejemplos de frases:</strong></p>
                 <div class="dwc-example">
@@ -425,6 +433,30 @@ composer install --no-dev</code></pre>
                 </div>
             </div>
 
+            <!-- ---------- Ver las categorías ---------- -->
+            <div id="dwc-tool-list-categories" style="padding-top: 25px;">
+                <h5>Ver las categorías &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista las <strong>categorías</strong> de la tienda (o las que contengan un texto) con su categoría padre y cuántos productos tiene cada una. Sirve para que el asistente encuentre la categoría correcta antes de hacer un cambio.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué categorías tiene la tienda?&rdquo;</p>
+                    <p>&ldquo;Busca la categoría de succionadores.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver las marcas ---------- -->
+            <div id="dwc-tool-list-brands" style="padding-top: 25px;">
+                <h5>Ver las marcas &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista las <strong>marcas</strong> (fabricantes) de la tienda, o las que contengan un texto, con cuántos productos tiene cada una.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué marcas tengo?&rdquo;</p>
+                    <p>&ldquo;¿Cuántos productos hay de Satisfyer?&rdquo;</p>
+                </div>
+            </div>
+
             <!-- ---------- Actualizar un producto ---------- -->
             <div id="dwc-tool-update-product" style="padding-top: 25px;">
                 <h5>Actualizar un producto &nbsp;<span class="label label-write">modifica</span></h5>
@@ -481,6 +513,84 @@ composer install --no-dev</code></pre>
                 </ul>
             </div>
 
+            <!-- ---------- Actualizar el stock de una combinación ---------- -->
+            <div id="dwc-tool-update-combination-stock" style="padding-top: 25px;">
+                <h5>Actualizar el stock de una combinación &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Cambia las existencias de <strong>una sola combinación</strong> (una talla, un color…) de un producto. PrestaShop recalcula solo el stock total del producto. Si no sabes qué combinación es, el asistente la busca antes con &ldquo;Ver el stock de un producto&rdquo;.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Pon 10 unidades de la talla M del producto 123.&rdquo;</p>
+                    <p>&ldquo;La talla L en rojo del 123 está agotada, ponla a 0.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Cambiar precios en bloque ---------- -->
+            <div id="dwc-tool-bulk-update-prices" style="padding-top: 25px;">
+                <h5>Cambiar precios en bloque &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Sube o baja el precio (sin IVA) de <strong>todos los productos</strong> de una categoría y/o marca, en <strong>porcentaje</strong> o en <strong>importe fijo</strong>. Puede incluir las subcategorías. No cambia el suplemento de precio de las combinaciones.</p>
+                <div class="alert alert-warning">
+                    <strong>Siempre en dos pasos.</strong> Primero el asistente te enseña una <strong>vista previa</strong>: cuántos productos cambian y su precio antes y después. <strong>No se aplica nada</strong> hasta que tú lo confirmes. Es el propio módulo el que lo exige, no depende del asistente. Revisa bien la vista previa: si repites una subida, se aplica otra vez sobre el precio ya subido.
+                </div>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Sube un 5 % los precios de la categoría Succionadores.&rdquo;</p>
+                    <p>&ldquo;Baja 2 € todos los productos de la marca Satisfyer.&rdquo;</p>
+                    <p>&ldquo;Sube un 10 % la categoría Para ella, incluidas sus subcategorías.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Crear un descuento ---------- -->
+            <div id="dwc-tool-create-discount" style="padding-top: 25px;">
+                <h5>Crear un descuento &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Crea una <strong>rebaja</strong> para un producto: un <strong>porcentaje</strong> o un <strong>importe</strong>, opcionalmente <strong>entre dos fechas</strong>. Puede ser para todas las combinaciones o solo una, y desde una cantidad mínima. Se aplica a todos los clientes.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Pon un 15 % de descuento al producto 123 hasta el 31 de diciembre.&rdquo;</p>
+                    <p>&ldquo;Rebaja 5 € el 123 del 1 al 15 de noviembre.&rdquo;</p>
+                    <p>&ldquo;Descuento del 20 % en la talla M del 123 este fin de semana.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Quitar un descuento ---------- -->
+            <div id="dwc-tool-delete-discount" style="padding-top: 25px;">
+                <h5>Quitar un descuento &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Elimina una rebaja de un producto. El asistente primero busca la rebaja con &ldquo;Ver descuentos de productos&rdquo; y luego la borra. Las rebajas que vienen de una <em>regla de precios del catálogo</em> no se pueden quitar desde aquí: hay que cambiar la regla en el back office.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Quita el descuento del producto 123.&rdquo;</p>
+                    <p>&ldquo;Elimina las rebajas que terminan hoy.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Cambiar las categorías de un producto ---------- -->
+            <div id="dwc-tool-update-categories" style="padding-top: 25px;">
+                <h5>Cambiar las categorías de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p><strong>Añade</strong> o <strong>quita</strong> categorías de un producto y cambia su <strong>categoría principal</strong>. El producto siempre se queda con al menos una categoría. Si quitas la categoría principal, hay que indicar cuál será la nueva.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Añade el producto 123 a la categoría Ideas para regalar.&rdquo;</p>
+                    <p>&ldquo;Quita el 123 de la categoría Ofertas.&rdquo;</p>
+                    <p>&ldquo;Pon Para ella como categoría principal del 123.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Cambiar la marca de un producto ---------- -->
+            <div id="dwc-tool-set-brand" style="padding-top: 25px;">
+                <h5>Cambiar la marca de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Asigna una <strong>marca</strong> (fabricante) a un producto, o se la quita.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Pon la marca Womanizer al producto 123.&rdquo;</p>
+                    <p>&ldquo;Quita la marca del producto 123.&rdquo;</p>
+                </div>
+            </div>
+
             <!-- ---------- Detectar productos con descripciones incompletas ---------- -->
             <div id="dwc-tool-missing-content" style="padding-top: 25px;">
                 <h5>Detectar productos con descripciones incompletas &nbsp;<span class="label label-read">consulta</span></h5>
@@ -510,24 +620,26 @@ composer install --no-dev</code></pre>
             <!-- ---------- Mejorar la descripción ---------- -->
             <div id="dwc-tool-update-description" style="padding-top: 25px;">
                 <h5>Mejorar la descripción de un producto &nbsp;<span class="label label-write">modifica</span></h5>
-                <p>Guarda una <strong>descripción corta y/o larga</strong> nueva para un producto (en el idioma por defecto). Lo normal es pedirle al asistente que la <em>redacte o mejore</em> y luego la aplique con tu visto bueno.</p>
+                <p>Guarda una <strong>descripción corta y/o larga</strong> nueva para un producto. Por defecto se guarda en el idioma principal de la tienda, pero también puede guardarse en <strong>otro idioma</strong>: así el asistente puede <strong>traducir</strong> la descripción y guardarla en cada idioma. Lo normal es pedirle al asistente que la <em>redacte o mejore</em> y luego la aplique con tu visto bueno.</p>
 
                 <p><strong>Ejemplos de frases:</strong></p>
                 <div class="dwc-example">
                     <p>&ldquo;Mejora la descripción del producto 233 y aplícala.&rdquo;</p>
                     <p>&ldquo;Escribe una descripción más vendedora para el 233 y guárdala.&rdquo;</p>
+                    <p>&ldquo;Traduce la descripción del 233 al inglés y al francés y guárdalas.&rdquo;</p>
                 </div>
             </div>
 
             <!-- ---------- Mejorar el SEO (meta) ---------- -->
             <div id="dwc-tool-update-meta" style="padding-top: 25px;">
                 <h5>Mejorar el SEO (meta) de un producto &nbsp;<span class="label label-write">modifica</span></h5>
-                <p>Guarda el <strong>meta título</strong> y/o la <strong>meta descripción</strong> (lo que se ve en Google) de un producto. Ideal para pedirle al asistente que optimice el SEO y lo aplique.</p>
+                <p>Guarda el <strong>meta título</strong> y/o la <strong>meta descripción</strong> (lo que se ve en Google) de un producto, en el idioma principal o en otro idioma de la tienda. Ideal para pedirle al asistente que optimice el SEO (o lo traduzca) y lo aplique.</p>
 
                 <p><strong>Ejemplos de frases:</strong></p>
                 <div class="dwc-example">
                     <p>&ldquo;Optimiza el SEO del producto 233 y guárdalo.&rdquo;</p>
                     <p>&ldquo;Ponle una meta descripción de unos 150 caracteres al 233.&rdquo;</p>
+                    <p>&ldquo;Traduce el SEO del 233 al inglés.&rdquo;</p>
                 </div>
             </div>
 

@@ -62,6 +62,14 @@ if (!class_exists('Language', false)) {
         {
             return [];
         }
+
+        /**
+         * @return int|false
+         */
+        public static function getIdByIso(string $isoCode, bool $noCache = false)
+        {
+            return false;
+        }
     }
 }
 
@@ -165,6 +173,19 @@ if (!class_exists('Product', false)) {
         }
 
         /**
+         * @param int[] $categories
+         */
+        public function addToCategories(array $categories = []): bool
+        {
+            return true;
+        }
+
+        public function deleteCategory(int $idCategory, bool $cleanPositions = true): bool
+        {
+            return true;
+        }
+
+        /**
          * @return array<int, array<string, mixed>>
          */
         public static function getProductCategoriesFull(int $idProduct, ?int $idLang = null): array
@@ -178,6 +199,61 @@ if (!class_exists('Product', false)) {
         public static function getFrontFeaturesStatic(int $idLang, int $idProduct): array
         {
             return [];
+        }
+    }
+}
+
+if (!class_exists('SpecificPrice', false)) {
+    class SpecificPrice
+    {
+        public ?int $id = null;
+
+        public int $id_product = 0;
+
+        public int $id_product_attribute = 0;
+
+        public int $id_specific_price_rule = 0;
+
+        public int $id_cart = 0;
+
+        public int $id_shop = 0;
+
+        public int $id_shop_group = 0;
+
+        public int $id_currency = 0;
+
+        public int $id_country = 0;
+
+        public int $id_group = 0;
+
+        public int $id_customer = 0;
+
+        public float $price = -1;
+
+        public int $from_quantity = 1;
+
+        public float $reduction = 0.0;
+
+        public int $reduction_tax = 1;
+
+        public string $reduction_type = 'amount';
+
+        public string $from = '';
+
+        public string $to = '';
+
+        public function __construct(?int $id = null)
+        {
+        }
+
+        public function add(): bool
+        {
+            return true;
+        }
+
+        public function delete(): bool
+        {
+            return true;
         }
     }
 }
@@ -268,6 +344,11 @@ if (!class_exists('Db', false)) {
         public function getValue(string $sql)
         {
             return false;
+        }
+
+        public function execute(string $sql): bool
+        {
+            return true;
         }
     }
 }

@@ -29,7 +29,7 @@ class StoreInfoTool
     #[McpTool(
         name: 'dwc_get_store_info',
         title: 'Get store info',
-        description: 'Returns basic, non-sensitive information about the PrestaShop store (name, versions, default language and currency).',
+        description: 'Returns basic, non-sensitive information about the PrestaShop store (name, versions, default language, active languages and currency).',
         annotations: new ToolAnnotations(
             title: 'Get store info',
             readOnlyHint: true,
@@ -60,6 +60,10 @@ class StoreInfoTool
             'php_version' => PHP_VERSION,
             'default_language' => $langIso,
             'default_currency' => $currencyIso,
+            'languages' => implode(', ', array_map(
+                static fn (array $l): string => (string) $l['iso_code'],
+                \Language::getLanguages(true)
+            )),
         ];
     }
 }

@@ -30,7 +30,7 @@ class Dwcprestamcp extends Module
     {
         $this->name = 'dwcprestamcp';
         $this->tab = 'administration';
-        $this->version = '2.6.0';
+        $this->version = '2.7.0';
         $this->author = 'DWC';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = ['min' => '8.2.0', 'max' => _PS_VERSION_];
