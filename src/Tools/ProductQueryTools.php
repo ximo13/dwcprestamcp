@@ -126,7 +126,7 @@ class ProductQueryTools
         ];
     }
 
-    private static function combinationLabel(\Db $db, int $idProductAttribute, int $idLang): string
+    public static function combinationLabel(\Db $db, int $idProductAttribute, int $idLang): string
     {
         $rows = $db->executeS(
             'SELECT agl.name AS group_name, al.name AS attr_name
@@ -150,7 +150,7 @@ class ProductQueryTools
     /**
      * @return array{0:int,1:int} [id_lang, id_shop]
      */
-    private static function ctx(): array
+    public static function ctx(): array
     {
         $context = \Context::getContext();
         $idLang = ($context !== null && $context->language !== null) ? (int) $context->language->id : (int) \Configuration::get('PS_LANG_DEFAULT');

@@ -79,6 +79,12 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_get_low_stock_products`  | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
 | `dwc_search_products`         | read-only | Search products by name or reference; price, stock, active status. |
 | `dwc_get_product_stock`       | read-only | Stock of a product, broken down by combination (size/colour).     |
+| `dwc_get_product_details`     | read-only | Full product sheet: categories, brand, supplier, prices excl./incl. tax, EAN, images, combinations, features. |
+| `dwc_get_low_stock_combinations` | read-only | Combinations (size/colour) of active products at or below a stock threshold. |
+| `dwc_get_unsold_products`     | read-only | Active products with stock and no sales in the last N days (dead stock). |
+| `dwc_get_unavailable_products` | read-only | Disabled products, or active products with stock 0 (and whether back-orders are allowed). |
+| `dwc_get_products_with_catalog_issues` | read-only | Catalog audit: products without image, without a real category, or without EAN. |
+| `dwc_get_product_discounts`   | read-only | Product discounts (specific prices): reduction, dates, restrictions; active, upcoming or all. |
 | `dwc_get_orders_by_status`    | read-only | Recent orders, optionally filtered by status name or state id.    |
 | `dwc_get_sales_by_date_range` | read-only | Revenue, order count and average order value for a date range.    |
 | `dwc_get_top_selling_products`| read-only | Best-selling products by quantity in a period.                    |
@@ -97,8 +103,11 @@ The exact endpoint URL is shown on the module's configuration page.
 - The HTTP endpoint enforces **DNS-rebinding protection** (host allowlist from
   your shop's configured domains) and CORS.
 - Always serve it over **HTTPS** in production.
-- All bundled tools are **read-only**. Add write tools deliberately, with the
-  correct `destructiveHint` (see [CONTRIBUTING.md](CONTRIBUTING.md)).
+- Most bundled tools are **read-only**. The three **write** tools
+  (`dwc_update_product`, `dwc_update_product_description`,
+  `dwc_update_product_meta`) modify live store data and are flagged with
+  `destructiveHint`, so clients ask for confirmation. Add new write tools
+  deliberately (see [CONTRIBUTING.md](CONTRIBUTING.md)).
 
 ## Architecture
 

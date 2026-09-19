@@ -93,7 +93,17 @@
                             <li><a href="#dwc-tool-low-stock">Ver productos con stock bajo <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-search-products">Buscar un producto <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-product-stock">Ver el stock de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-product-details">Ver la ficha completa de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-low-stock-combinations">Ver combinaciones que se agotan <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-unsold-products">Ver productos que no se venden <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-unavailable-products">Ver productos no disponibles <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-catalog-issues">Detectar productos sin imagen, sin categoría o sin EAN <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-product-discounts">Ver descuentos de productos <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-product">Actualizar un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-missing-content">Detectar productos con descripciones incompletas <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-product-content">Ver las descripciones de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-update-description">Mejorar la descripción de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-meta">Mejorar el SEO (meta) de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                         </ol>
                     </li>
                     <li><a href="#dwc-cat-pedidos"><strong>Pedidos y ventas</strong></a>
@@ -107,14 +117,6 @@
                     <li><a href="#dwc-cat-clientes"><strong>Clientes</strong></a>
                         <ol class="dwc-toc-sub">
                             <li><a href="#dwc-tool-customers">Buscar o listar clientes <span class="dwc-toc-badge read">consulta</span></a></li>
-                        </ol>
-                    </li>
-                    <li><a href="#dwc-cat-contenido"><strong>Contenido y SEO</strong></a>
-                        <ol class="dwc-toc-sub">
-                            <li><a href="#dwc-tool-missing-content">Detectar contenido incompleto <span class="dwc-toc-badge read">consulta</span></a></li>
-                            <li><a href="#dwc-tool-product-content">Ver el contenido de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
-                            <li><a href="#dwc-tool-update-description">Mejorar la descripción <span class="dwc-toc-badge write">modifica</span></a></li>
-                            <li><a href="#dwc-tool-update-meta">Mejorar el SEO (meta) <span class="dwc-toc-badge write">modifica</span></a></li>
                         </ol>
                     </li>
                 </ol>
@@ -345,6 +347,84 @@ composer install --no-dev</code></pre>
                 </div>
             </div>
 
+            <!-- ---------- Ver la ficha completa de un producto ---------- -->
+            <div id="dwc-tool-product-details" style="padding-top: 25px;">
+                <h5>Ver la ficha completa de un producto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Muestra <strong>todo</strong> sobre un producto: categorías, marca, proveedor, precio de coste, precio <strong>con y sin IVA</strong> (y con descuento si lo tiene), EAN/UPC/ISBN/MPN, imágenes, combinaciones con su stock y características. Necesita el ID del producto.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Dame la ficha completa del producto 123.&rdquo;</p>
+                    <p>&ldquo;¿Qué marca y proveedor tiene el producto 123?&rdquo;</p>
+                    <p>&ldquo;¿Cuánto cuesta el 123 con IVA?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver combinaciones que se agotan ---------- -->
+            <div id="dwc-tool-low-stock-combinations" style="padding-top: 25px;">
+                <h5>Ver combinaciones que se agotan &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista las <strong>combinaciones</strong> (tallas, colores…) de productos activos que tienen el stock por debajo del límite que indiques (por defecto, 2 unidades). Se puede consultar todo el catálogo o un solo producto.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué tallas o colores se están agotando?&rdquo;</p>
+                    <p>&ldquo;Combinaciones con 0 unidades.&rdquo;</p>
+                    <p>&ldquo;¿Qué tallas del producto 123 quedan con menos de 3?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver productos que no se venden ---------- -->
+            <div id="dwc-tool-unsold-products" style="padding-top: 25px;">
+                <h5>Ver productos que no se venden &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista los productos <strong>activos con stock</strong> que no se han vendido en los últimos días que indiques (por defecto, 90). Muestra el stock, la fecha de la última venta y cuándo se dio de alta. Sirve para detectar <strong>stock parado</strong>.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos no se han vendido en los últimos 90 días?&rdquo;</p>
+                    <p>&ldquo;Stock parado de los últimos 6 meses.&rdquo;</p>
+                    <p>&ldquo;¿Qué productos tengo con stock y sin ventas este año?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver productos no disponibles ---------- -->
+            <div id="dwc-tool-unavailable-products" style="padding-top: 25px;">
+                <h5>Ver productos no disponibles &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista los productos <strong>desactivados</strong>, o los que están <strong>activos pero con stock 0</strong>. Estos últimos siguen apareciendo en la tienda, y la respuesta indica si aun así se pueden pedir (pedidos sin stock permitidos).</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos están activos pero sin stock?&rdquo;</p>
+                    <p>&ldquo;Dame los productos desactivados.&rdquo;</p>
+                    <p>&ldquo;¿Qué se ve en la tienda pero no se puede comprar?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Detectar productos sin imagen, sin categoría o sin EAN ---------- -->
+            <div id="dwc-tool-catalog-issues" style="padding-top: 25px;">
+                <h5>Detectar productos sin imagen, sin categoría o sin EAN &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Revisa el catálogo y lista los productos <strong>sin imagen</strong>, <strong>sin categoría</strong> (solo están en Inicio o en ninguna) o <strong>sin EAN</strong> (ni en el producto ni en sus combinaciones). Por defecto solo revisa los productos activos.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos no tienen imagen?&rdquo;</p>
+                    <p>&ldquo;Dame los productos sin categoría.&rdquo;</p>
+                    <p>&ldquo;¿Qué productos no tienen EAN?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver descuentos de productos ---------- -->
+            <div id="dwc-tool-product-discounts" style="padding-top: 25px;">
+                <h5>Ver descuentos de productos &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista los <strong>precios específicos</strong> (rebajas) de los productos: cuánto descuentan (porcentaje o importe), <strong>desde y hasta cuándo</strong>, desde qué cantidad y si son solo para un cliente, grupo, país o moneda. Puedes ver los vigentes, los programados o todos, y también filtrar por producto.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos tienen descuento ahora mismo?&rdquo;</p>
+                    <p>&ldquo;¿Hasta cuándo dura la rebaja del producto 123?&rdquo;</p>
+                    <p>&ldquo;¿Hay descuentos programados para más adelante?&rdquo;</p>
+                </div>
+            </div>
+
             <!-- ---------- Actualizar un producto ---------- -->
             <div id="dwc-tool-update-product" style="padding-top: 25px;">
                 <h5>Actualizar un producto &nbsp;<span class="label label-write">modifica</span></h5>
@@ -399,6 +479,56 @@ composer install --no-dev</code></pre>
                     <li>Si te equivocas al pedirlo, dile <em>&ldquo;deshaz&rdquo;</em> con el valor anterior y vuelve a lanzarlo (por ejemplo, <em>&ldquo;vuelve a poner el precio del producto 123 en 12,50&rdquo;</em>).</li>
                     <li>El asistente no puede borrar productos ni tocar los pedidos: solo modifica los campos indicados arriba.</li>
                 </ul>
+            </div>
+
+            <!-- ---------- Detectar productos con descripciones incompletas ---------- -->
+            <div id="dwc-tool-missing-content" style="padding-top: 25px;">
+                <h5>Detectar productos con descripciones incompletas &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Revisa los <strong>productos</strong> del catálogo y lista los que tienen <strong>descripciones incompletas</strong>: sin descripción corta, sin descripción larga, sin meta título o sin meta descripción. También puedes pedir los que la tienen <strong>demasiado corta</strong> (indicando un mínimo de caracteres).</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué productos no tienen descripción corta?&rdquo;</p>
+                    <p>&ldquo;Dame los productos sin meta descripción.&rdquo;</p>
+                    <p>&ldquo;¿Qué productos tienen una descripción muy pobre (menos de 100 caracteres)?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Ver las descripciones de un producto ---------- -->
+            <div id="dwc-tool-product-content" style="padding-top: 25px;">
+                <h5>Ver las descripciones de un producto &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Muestra las <strong>descripciones</strong> (corta y larga) y el <strong>SEO</strong> (meta título y meta descripción) de un producto, con su longitud. Es el paso previo para que el asistente lo revise y te proponga mejoras.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Enséñame la descripción del producto 233.&rdquo;</p>
+                    <p>&ldquo;Revisa la descripción del producto 233 y dime cómo mejorarlo.&rdquo;</p>
+                    <p>&ldquo;¿El SEO del producto 233 está bien?&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Mejorar la descripción ---------- -->
+            <div id="dwc-tool-update-description" style="padding-top: 25px;">
+                <h5>Mejorar la descripción de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Guarda una <strong>descripción corta y/o larga</strong> nueva para un producto (en el idioma por defecto). Lo normal es pedirle al asistente que la <em>redacte o mejore</em> y luego la aplique con tu visto bueno.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Mejora la descripción del producto 233 y aplícala.&rdquo;</p>
+                    <p>&ldquo;Escribe una descripción más vendedora para el 233 y guárdala.&rdquo;</p>
+                </div>
+            </div>
+
+            <!-- ---------- Mejorar el SEO (meta) ---------- -->
+            <div id="dwc-tool-update-meta" style="padding-top: 25px;">
+                <h5>Mejorar el SEO (meta) de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>Guarda el <strong>meta título</strong> y/o la <strong>meta descripción</strong> (lo que se ve en Google) de un producto. Ideal para pedirle al asistente que optimice el SEO y lo aplique.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Optimiza el SEO del producto 233 y guárdalo.&rdquo;</p>
+                    <p>&ldquo;Ponle una meta descripción de unos 150 caracteres al 233.&rdquo;</p>
+                </div>
             </div>
 
             <!-- ==================== Categoría: Pedidos y ventas ==================== -->
@@ -472,61 +602,6 @@ composer install --no-dev</code></pre>
                     <p>&ldquo;Busca al cliente con email juan@ejemplo.com.&rdquo;</p>
                     <p>&ldquo;¿Quiénes son mis últimos clientes registrados?&rdquo;</p>
                     <p>&ldquo;Dame los 20 clientes más recientes.&rdquo;</p>
-                </div>
-            </div>
-
-            <!-- ==================== Categoría: Contenido y SEO ==================== -->
-            <h5 id="dwc-cat-contenido" style="margin-top: 35px; color: #25b9d7; text-transform: uppercase; letter-spacing: 1px; font-size: 12px;">
-                <i class="icon icon-file-text"></i> Contenido y SEO
-            </h5>
-
-            <!-- ---------- Detectar contenido incompleto ---------- -->
-            <div id="dwc-tool-missing-content" style="padding-top: 10px;">
-                <h5>Detectar contenido incompleto &nbsp;<span class="label label-read">consulta</span></h5>
-                <p>Audita el catálogo y lista los productos a los que les <strong>falta contenido</strong>: sin descripción corta, sin descripción larga, sin meta título o sin meta descripción. También puedes pedir los que la tienen <strong>demasiado corta</strong> (indicando un mínimo de caracteres).</p>
-
-                <p><strong>Ejemplos de frases:</strong></p>
-                <div class="dwc-example">
-                    <p>&ldquo;¿Qué productos no tienen descripción corta?&rdquo;</p>
-                    <p>&ldquo;Dame los productos sin meta descripción.&rdquo;</p>
-                    <p>&ldquo;¿Qué productos tienen una descripción muy pobre (menos de 100 caracteres)?&rdquo;</p>
-                </div>
-            </div>
-
-            <!-- ---------- Ver el contenido de un producto ---------- -->
-            <div id="dwc-tool-product-content" style="padding-top: 25px;">
-                <h5>Ver el contenido de un producto &nbsp;<span class="label label-read">consulta</span></h5>
-                <p>Muestra las <strong>descripciones</strong> (corta y larga) y el <strong>SEO</strong> (meta título y meta descripción) de un producto, con su longitud. Es el paso previo para que el asistente lo revise y te proponga mejoras.</p>
-
-                <p><strong>Ejemplos de frases:</strong></p>
-                <div class="dwc-example">
-                    <p>&ldquo;Enséñame la descripción del producto 233.&rdquo;</p>
-                    <p>&ldquo;Revisa el contenido del producto 233 y dime cómo mejorarlo.&rdquo;</p>
-                    <p>&ldquo;¿El SEO del producto 233 está bien?&rdquo;</p>
-                </div>
-            </div>
-
-            <!-- ---------- Mejorar la descripción ---------- -->
-            <div id="dwc-tool-update-description" style="padding-top: 25px;">
-                <h5>Mejorar la descripción &nbsp;<span class="label label-write">modifica</span></h5>
-                <p>Guarda una <strong>descripción corta y/o larga</strong> nueva para un producto (en el idioma por defecto). Lo normal es pedirle al asistente que la <em>redacte o mejore</em> y luego la aplique con tu visto bueno.</p>
-
-                <p><strong>Ejemplos de frases:</strong></p>
-                <div class="dwc-example">
-                    <p>&ldquo;Mejora la descripción del producto 233 y aplícala.&rdquo;</p>
-                    <p>&ldquo;Escribe una descripción más vendedora para el 233 y guárdala.&rdquo;</p>
-                </div>
-            </div>
-
-            <!-- ---------- Mejorar el SEO (meta) ---------- -->
-            <div id="dwc-tool-update-meta" style="padding-top: 25px;">
-                <h5>Mejorar el SEO (meta) &nbsp;<span class="label label-write">modifica</span></h5>
-                <p>Guarda el <strong>meta título</strong> y/o la <strong>meta descripción</strong> (lo que se ve en Google) de un producto. Ideal para pedirle al asistente que optimice el SEO y lo aplique.</p>
-
-                <p><strong>Ejemplos de frases:</strong></p>
-                <div class="dwc-example">
-                    <p>&ldquo;Optimiza el SEO del producto 233 y guárdalo.&rdquo;</p>
-                    <p>&ldquo;Ponle una meta descripción de unos 150 caracteres al 233.&rdquo;</p>
                 </div>
             </div>
 

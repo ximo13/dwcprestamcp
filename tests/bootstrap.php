@@ -91,6 +91,30 @@ if (!class_exists('Product', false)) {
 
         public int|bool $on_sale = 0;
 
+        public string $ean13 = '';
+
+        public string $upc = '';
+
+        public string $isbn = '';
+
+        public string $mpn = '';
+
+        public string $visibility = 'both';
+
+        public string $condition = 'new';
+
+        public int $id_manufacturer = 0;
+
+        public int $id_supplier = 0;
+
+        public int $id_category_default = 0;
+
+        public float $wholesale_price = 0.0;
+
+        public string $date_add = '';
+
+        public string $date_upd = '';
+
         /** @var array<int, string> */
         public array $description = [];
 
@@ -111,12 +135,104 @@ if (!class_exists('Product', false)) {
         {
             return true;
         }
+
+        /**
+         * @param mixed $specificPriceOutput
+         */
+        public static function getPriceStatic(
+            int $idProduct,
+            bool $usetax = true,
+            ?int $idProductAttribute = null,
+            int $decimals = 6,
+            ?int $divisor = null,
+            bool $onlyReduc = false,
+            bool $usereduc = true,
+            int $quantity = 1,
+            bool $forceAssociatedTax = false,
+            ?int $idCustomer = null,
+            ?int $idCart = null,
+            ?int $idAddress = null,
+            &$specificPriceOutput = null,
+            bool $withEcotax = true,
+            bool $useGroupReduction = true
+        ): float {
+            return 0.0;
+        }
+
+        public function getTaxesRate(): float
+        {
+            return 0.0;
+        }
+
+        /**
+         * @return array<int, array<string, mixed>>
+         */
+        public static function getProductCategoriesFull(int $idProduct, ?int $idLang = null): array
+        {
+            return [];
+        }
+
+        /**
+         * @return array<int, array<string, mixed>>
+         */
+        public static function getFrontFeaturesStatic(int $idLang, int $idProduct): array
+        {
+            return [];
+        }
+    }
+}
+
+if (!class_exists('Image', false)) {
+    class Image
+    {
+        /**
+         * @return array<int, array<string, mixed>>
+         */
+        public static function getImages(int $idLang, int $idProduct): array
+        {
+            return [];
+        }
+    }
+}
+
+if (!class_exists('Manufacturer', false)) {
+    class Manufacturer
+    {
+        public static function getNameById(int $id): string
+        {
+            return '';
+        }
+    }
+}
+
+if (!class_exists('Supplier', false)) {
+    class Supplier
+    {
+        public static function getNameById(int $id): string
+        {
+            return '';
+        }
+    }
+}
+
+if (!class_exists('Link', false)) {
+    class Link
+    {
+        public function getImageLink(string $name, string $ids): string
+        {
+            return '';
+        }
     }
 }
 
 if (!class_exists('StockAvailable', false)) {
     class StockAvailable
     {
+        public static function getQuantityAvailableByProduct(int $idProduct, int $idProductAttribute = 0, ?int $idShop = null): int
+        {
+            return 0;
+        }
+
         public static function setQuantity(int $idProduct, int $idProductAttribute, int $quantity, ?int $idShop = null, bool $addMovement = true): void
         {
         }
@@ -139,11 +255,19 @@ if (!class_exists('Db', false)) {
         }
 
         /**
-         * @return array<int, array<string, string>>|false
+         * @return array<int, array<string, string|null>>|false
          */
         public function executeS(string $sql)
         {
             return [];
+        }
+
+        /**
+         * @return string|false
+         */
+        public function getValue(string $sql)
+        {
+            return false;
         }
     }
 }
@@ -163,6 +287,8 @@ if (!class_exists('Context', false)) {
         public ?Currency $currency = null;
 
         public ?Shop $shop = null;
+
+        public ?Link $link = null;
 
         public static function getContext(): ?Context
         {

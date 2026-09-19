@@ -148,8 +148,7 @@ tienda, y sirve el protocolo MCP por entrada/salida estándar.
    }
    ```
 
-Si ves esos datos, el endpoint, el token y las tres herramientas están
-operativos.
+Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 
 ---
 
@@ -192,15 +191,33 @@ operativos.
 
 ## 8. Herramientas incluidas
 
-| Herramienta | Tipo | Qué hace |
-|---|---|---|
-| `dwc_get_store_info` | solo lectura | Datos básicos de la tienda: nombre, versión de PrestaShop/PHP, idioma y moneda por defecto. |
-| `dwc_get_low_stock_products` | solo lectura | Productos con stock igual o por debajo de un umbral (parámetros: `threshold`, `limit`). |
-| `dwc_update_product` | **escritura** | Actualiza un producto existente: precio, activo, nombre, referencia, peso, indicador de oferta (`on_sale`) y cantidad de stock. Solo cambia los campos que envíes. Modifica datos reales de la tienda. |
+| Categoría | Herramienta | Tipo | Qué hace |
+|---|---|---|---|
+| Tienda | `dwc_get_store_info` | solo lectura | Datos básicos de la tienda: nombre, versión de PrestaShop/PHP, idioma y moneda por defecto. |
+| Productos | `dwc_get_low_stock_products` | solo lectura | Productos con stock igual o por debajo de un umbral. |
+| Productos | `dwc_search_products` | solo lectura | Busca productos por nombre o referencia; precio, stock y si está activo. |
+| Productos | `dwc_get_product_stock` | solo lectura | Stock de un producto, desglosado por combinación (talla, color…). |
+| Productos | `dwc_get_product_details` | solo lectura | Ficha completa: categorías, marca, proveedor, precios con y sin IVA, EAN, imágenes, combinaciones y características. |
+| Productos | `dwc_get_low_stock_combinations` | solo lectura | Combinaciones de productos activos con stock igual o por debajo de un umbral. |
+| Productos | `dwc_get_unsold_products` | solo lectura | Productos activos con stock y sin ventas en los últimos N días (stock parado). |
+| Productos | `dwc_get_unavailable_products` | solo lectura | Productos desactivados, o activos con stock 0 (e indica si admiten pedidos sin stock). |
+| Productos | `dwc_get_products_with_catalog_issues` | solo lectura | Productos sin imagen, sin categoría (solo Inicio o ninguna) o sin EAN. |
+| Productos | `dwc_get_product_discounts` | solo lectura | Descuentos (precios específicos): reducción, fechas y restricciones; vigentes, programados o todos. |
+| Productos | `dwc_get_products_missing_content` | solo lectura | Productos con la descripción corta/larga o el meta título/descripción vacíos o demasiado cortos. |
+| Productos | `dwc_get_product_content` | solo lectura | Descripciones y meta SEO de un producto, con su longitud. |
+| Productos | `dwc_update_product` | **escritura** | Actualiza precio, activo, nombre, referencia, peso, `on_sale` y stock. Solo cambia los campos enviados. |
+| Productos | `dwc_update_product_description` | **escritura** | Actualiza la descripción corta y/o larga (idioma por defecto). |
+| Productos | `dwc_update_product_meta` | **escritura** | Actualiza el meta título y/o la meta descripción (idioma por defecto). |
+| Pedidos y ventas | `dwc_get_orders_by_status` | solo lectura | Pedidos recientes, opcionalmente filtrados por estado. |
+| Pedidos y ventas | `dwc_get_sales_by_date_range` | solo lectura | Facturación, número de pedidos y ticket medio de un periodo. |
+| Pedidos y ventas | `dwc_get_top_selling_products` | solo lectura | Productos más vendidos (por unidades) en un periodo. |
+| Pedidos y ventas | `dwc_get_abandoned_carts` | solo lectura | Carritos con productos que no llegaron a pedido, en los últimos N días. |
+| Clientes | `dwc_get_customers` | solo lectura | Busca clientes por email o lista los más recientes. |
 
-> El detalle de parámetros y el uso de cada herramienta (incluidos los matices
-> de `on_sale` y del stock) se cubren en el **manual de uso de las
-> herramientas**, documento aparte.
+Las herramientas de **escritura** modifican datos reales de la tienda; el asistente debe pedir confirmación antes de usarlas.
+
+> El uso de cada herramienta, con frases de ejemplo, se explica en la pestaña
+> **Manual** de la página de configuración del módulo.
 
 ---
 

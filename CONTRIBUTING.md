@@ -98,7 +98,7 @@ run automatically vs. what to confirm with a human.
 | Creates/adds data (non-destructive) | `false`        | `false`           | depends          |
 | Updates/deletes existing data       | `false`        | `true`            | depends          |
 
-- **`readOnlyHint: true`** → must not modify anything. All current tools are read-only.
+- **`readOnlyHint: true`** → must not modify anything. Most bundled tools are read-only; the `dwc_update_*` tools are write tools.
 - **`destructiveHint: true`** → can overwrite/delete data. Validate every input.
 - **`idempotentHint`** matters only when `readOnlyHint` is `false`.
 - Keep `openWorldHint: false` unless the tool reaches external services.
