@@ -79,7 +79,7 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_get_low_stock_products`  | read-only | Products at or below a stock threshold (params: `threshold`, `limit`). |
 | `dwc_search_products`         | read-only | Search products by name or reference; price, stock, active status. |
 | `dwc_get_product_stock`       | read-only | Stock of a product, broken down by combination (size/colour).     |
-| `dwc_get_product_details`     | read-only | Full product sheet: categories, brand, supplier, prices excl./incl. tax, EAN, images, combinations, features. |
+| `dwc_get_product_details`     | read-only | Full product sheet: categories, brand, supplier, prices excl./incl. tax, EAN, images, combinations, features, tags. |
 | `dwc_get_low_stock_combinations` | read-only | Combinations (size/colour) of active products at or below a stock threshold. |
 | `dwc_get_unsold_products`     | read-only | Active products with stock and no sales in the last N days (dead stock). |
 | `dwc_get_unavailable_products` | read-only | Disabled products, or active products with stock 0 (and whether back-orders are allowed). |
@@ -103,6 +103,8 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_update_product_categories` | **write** | Add/remove categories of a product and set its main category. |
 | `dwc_set_product_brand`       | **write** | Set or remove the brand of a product. |
 | `dwc_update_product_features` | **write** | Set (predefined value or custom text) or remove features of a product. |
+| `dwc_update_product_images`   | **write** | Image alt texts in one language (also fill all missing ones) and the cover image. |
+| `dwc_update_product_tags`     | **write** | Add, remove or replace the tags of a product in one language. |
 | `dwc_update_product_description` | **write** | Update a product's short and/or long description, in the default language or another one (`language` ISO code). |
 | `dwc_update_product_meta`     | **write** | Update a product's SEO meta title and/or meta description, in the default language or another one (`language` ISO code). |
 

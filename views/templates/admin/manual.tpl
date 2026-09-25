@@ -110,6 +110,8 @@
                             <li><a href="#dwc-tool-update-categories">Cambiar las categorías de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-set-brand">Cambiar la marca de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-update-features">Cambiar las características de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-images">Textos alternativos y portada de las imágenes <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-tags">Cambiar las etiquetas de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-missing-content">Detectar productos con descripciones incompletas <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-product-content">Ver las descripciones de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-description">Mejorar la descripción de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
@@ -360,7 +362,7 @@ composer install --no-dev</code></pre>
             <!-- ---------- Ver la ficha completa de un producto ---------- -->
             <div id="dwc-tool-product-details" style="padding-top: 25px;">
                 <h5>Ver la ficha completa de un producto &nbsp;<span class="label label-read">consulta</span></h5>
-                <p>Muestra <strong>todo</strong> sobre un producto: categorías, marca, proveedor, precio de coste, precio <strong>con y sin IVA</strong> (y con descuento si lo tiene), EAN/UPC/ISBN/MPN, imágenes, combinaciones con su stock y características. Necesita el ID del producto.</p>
+                <p>Muestra <strong>todo</strong> sobre un producto: categorías, marca, proveedor, precio de coste, precio <strong>con y sin IVA</strong> (y con descuento si lo tiene), EAN/UPC/ISBN/MPN, imágenes con su texto alternativo, combinaciones con su stock, características y etiquetas. Necesita el ID del producto.</p>
 
                 <p><strong>Ejemplos de frases:</strong></p>
                 <div class="dwc-example">
@@ -657,6 +659,42 @@ composer install --no-dev</code></pre>
                 <div class="dwc-example">
                     <p><strong>Quitar</strong></p>
                     <p>&ldquo;Quita la característica Nivel de experiencia del producto 123.&rdquo;</p>
+                </div>
+            </div>
+            <div id="dwc-tool-update-images" style="padding-top: 25px;">
+                <h5>Textos alternativos y portada de las imágenes &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>
+                    Cambia el <strong>texto alternativo</strong> de las imágenes de un producto (el que leen
+                    Google y los lectores de pantalla), rellena de una vez el de todas las imágenes que
+                    <strong>no lo tengan</strong>, y elige qué imagen es la <strong>portada</strong>.
+                    No sube ni borra imágenes.
+                </p>
+                <p>
+                    Los textos se cambian solo en el idioma principal de la tienda, o en el que le indiques;
+                    las traducciones no se tocan. Para saber qué imágenes tiene un producto, pide antes su ficha.
+                </p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Pon a las imágenes sin texto alternativo del producto 123 el texto &lsquo;Vela aromática de lavanda&rsquo;.&rdquo;</p>
+                    <p>&ldquo;Propón textos alternativos para las imágenes del producto 123 y guárdalos cuando te dé el visto bueno.&rdquo;</p>
+                    <p>&ldquo;Pon la segunda imagen del producto 123 como portada.&rdquo;</p>
+                </div>
+            </div>
+            <div id="dwc-tool-update-tags" style="padding-top: 25px;">
+                <h5>Cambiar las etiquetas de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>
+                    Añade o quita <strong>etiquetas</strong> de un producto, o sustituye todas de una vez.
+                    Las etiquetas ayudan al buscador de la tienda a encontrar el producto. Se cambian solo en
+                    el idioma principal o en el que le indiques; las de otros idiomas no se tocan. Las etiquetas
+                    actuales aparecen en la ficha del producto.
+                </p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;Añade las etiquetas relax y aromaterapia al producto 123.&rdquo;</p>
+                    <p>&ldquo;Quita la etiqueta oferta del producto 123.&rdquo;</p>
+                    <p>&ldquo;Deja en el producto 123 solo las etiquetas vela, lavanda y regalo.&rdquo;</p>
                 </div>
             </div>
 
