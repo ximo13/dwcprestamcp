@@ -44,13 +44,18 @@ class StoreInfoTool
 
         $shopName = (string) \Configuration::get('PS_SHOP_NAME');
 
-        $langIso = '';
-        if ($context !== null && $context->language !== null) {
+        // The store defaults come from its configuration: over STDIO or a bare HTTP request the
+        // context has no currency (and may not carry the default language).
+        $langIso = (string) \Language::getIsoById((int) \Configuration::get('PS_LANG_DEFAULT'));
+        if ($langIso === '' && $context !== null && $context->language !== null) {
             $langIso = (string) $context->language->iso_code;
         }
 
         $currencyIso = '';
-        if ($context !== null && $context->currency !== null) {
+        $currency = new \Currency((int) \Configuration::get('PS_CURRENCY_DEFAULT'));
+        if (\Validate::isLoadedObject($currency)) {
+            $currencyIso = (string) $currency->iso_code;
+        } elseif ($context !== null && $context->currency !== null) {
             $currencyIso = (string) $context->currency->iso_code;
         }
 
