@@ -579,4 +579,65 @@ class ProductCatalogTools
 
         return $out;
     }
+
+    /**
+     * List product features (e.g. "Material", "Color") with their predefined
+     * values, to find the ids that dwc_update_product_features needs.
+     *
+     * @param string|null $search   Text contained in the feature name. Null = all.
+     * @param string|null $language Language ISO code for names. Null = default language.
+     * @param int         $limit    Max features (1-200). Defaults to 50.
+     *
+     * @return array<string, mixed>
+     */
+    #[McpTool(
+        name: 'dwc_list_features',
+        title: 'List features',
+        description: 'Lists product features (e.g. Material, Size) with their predefined values and ids, optionally filtered by name. Custom per-product values are not listed. Use it to find ids for dwc_update_product_features.',
+        annotations: new ToolAnnotations(title: 'List features', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false)
+    )]
+    public function listFeatures(
+        #[Schema(type: 'string', maxLength: 128)]
+        ?string $search = null,
+        #[Schema(type: 'string', maxLength: 5)]
+        ?string $language = null,
+        #[Schema(type: 'integer', minimum: 1, maximum: 200)]
+        int $limit = 50
+    ): array {
+        $idLang = ProductQueryTools::langId($language);
+        if ($idLang === null) {
+            return ['success' => false, 'message' => sprintf('Language "%s" not found or inactive.', (string) $language)];
+        }
+        $limit = min(200, max(1, $limit));
+        $db = \Db::getInstance();
+        $features = $db->executeS(
+            'SELECT f.id_feature, fl.name
+             FROM `' . _DB_PREFIX_ . 'feature` f
+             LEFT JOIN `' . _DB_PREFIX_ . 'feature_lang` fl ON fl.id_feature = f.id_feature AND fl.id_lang = ' . $idLang
+            . ($search !== null && trim($search) !== '' ? ' WHERE fl.name LIKE \'%' . pSQL(trim($search), true) . '%\'' : '') . '
+             ORDER BY f.position ASC, f.id_feature ASC
+             LIMIT ' . $limit
+        );
+
+        $out = [];
+        foreach (is_array($features) ? $features : [] as $f) {
+            $values = $db->executeS(
+                'SELECT v.id_feature_value, vl.value
+                 FROM `' . _DB_PREFIX_ . 'feature_value` v
+                 LEFT JOIN `' . _DB_PREFIX_ . 'feature_value_lang` vl ON vl.id_feature_value = v.id_feature_value AND vl.id_lang = ' . $idLang . '
+                 WHERE v.id_feature = ' . (int) $f['id_feature'] . ' AND v.custom = 0
+                 ORDER BY vl.value ASC'
+            );
+            $out[] = [
+                'id_feature' => (int) $f['id_feature'],
+                'name' => (string) $f['name'],
+                'values' => array_map(static fn (array $v): array => [
+                    'id_feature_value' => (int) $v['id_feature_value'],
+                    'value' => (string) $v['value'],
+                ], is_array($values) ? $values : []),
+            ];
+        }
+
+        return ['success' => true, 'language' => (string) \Language::getIsoById($idLang), 'features' => $out];
+    }
 }

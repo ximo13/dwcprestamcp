@@ -34,6 +34,11 @@ if (!class_exists('Tools', false)) {
         {
             return '';
         }
+
+        public static function str2url(string $str): string
+        {
+            return $str;
+        }
     }
 }
 
@@ -70,6 +75,14 @@ if (!class_exists('Language', false)) {
         {
             return false;
         }
+
+        /**
+         * @return string|false
+         */
+        public static function getIsoById(int $idLang)
+        {
+            return false;
+        }
     }
 }
 
@@ -77,6 +90,41 @@ if (!class_exists('Validate', false)) {
     class Validate
     {
         public static function isLoadedObject(mixed $object): bool
+        {
+            return true;
+        }
+
+        public static function isCatalogName(string $name): bool
+        {
+            return true;
+        }
+
+        public static function isGenericName(string $name): bool
+        {
+            return true;
+        }
+
+        public static function isLinkRewrite(string $link): bool
+        {
+            return true;
+        }
+
+        public static function isEan13(string $ean13): bool
+        {
+            return true;
+        }
+
+        public static function isUpc(string $upc): bool
+        {
+            return true;
+        }
+
+        public static function isIsbn(string $isbn): bool
+        {
+            return true;
+        }
+
+        public static function isMpn(string $mpn): bool
         {
             return true;
         }
@@ -110,6 +158,29 @@ if (!class_exists('Product', false)) {
         public string $visibility = 'both';
 
         public string $condition = 'new';
+
+        public float $width = 0.0;
+
+        public float $height = 0.0;
+
+        public float $depth = 0.0;
+
+        public int $id_tax_rules_group = 0;
+
+        public int|bool $available_for_order = 1;
+
+        public int|bool $show_price = 1;
+
+        public int $minimal_quantity = 1;
+
+        /** @var array<int, string> */
+        public array $link_rewrite = [];
+
+        /** @var array<int, string> */
+        public array $available_now = [];
+
+        /** @var array<int, string> */
+        public array $available_later = [];
 
         public int $id_manufacturer = 0;
 
@@ -312,6 +383,21 @@ if (!class_exists('StockAvailable', false)) {
         public static function setQuantity(int $idProduct, int $idProductAttribute, int $quantity, ?int $idShop = null, bool $addMovement = true): void
         {
         }
+
+        public static function setProductOutOfStock(int $idProduct, int|bool $outOfStock = false, ?int $idShop = null, int $idProductAttribute = 0): void
+        {
+        }
+    }
+}
+
+if (!class_exists('TaxRulesGroup', false)) {
+    class TaxRulesGroup
+    {
+        public int $id = 0;
+
+        public function __construct(?int $id = null)
+        {
+        }
     }
 }
 
@@ -349,6 +435,55 @@ if (!class_exists('Db', false)) {
         public function execute(string $sql): bool
         {
             return true;
+        }
+
+        /**
+         * @return array<string, mixed>|false
+         */
+        public function getRow(string $sql)
+        {
+            return false;
+        }
+
+        /**
+         * @param array<string, mixed> $data
+         */
+        public function insert(string $table, array $data): bool
+        {
+            return true;
+        }
+
+        /**
+         * @param array<string, mixed> $data
+         */
+        public function update(string $table, array $data, string $where = ''): bool
+        {
+            return true;
+        }
+
+        public function delete(string $table, string $where = ''): bool
+        {
+            return true;
+        }
+
+        /**
+         * @return int|string
+         */
+        public function Insert_ID()
+        {
+            return 0;
+        }
+    }
+}
+
+if (!class_exists('SpecificPriceRule', false)) {
+    class SpecificPriceRule
+    {
+        /**
+         * @param int[]|false $products
+         */
+        public static function applyAllRules($products = false): void
+        {
         }
     }
 }

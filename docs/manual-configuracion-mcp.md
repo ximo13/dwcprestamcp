@@ -205,15 +205,17 @@ Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 | Productos | `dwc_get_product_discounts` | solo lectura | Descuentos (precios específicos): reducción, fechas y restricciones; vigentes, programados o todos. |
 | Productos | `dwc_list_categories` | solo lectura | Categorías (o las que contengan un texto) con su categoría padre y número de productos. |
 | Productos | `dwc_list_brands` | solo lectura | Marcas (fabricantes) con su número de productos. |
+| Productos | `dwc_list_features` | solo lectura | Características con sus valores predefinidos e IDs. |
 | Productos | `dwc_get_products_missing_content` | solo lectura | Productos con la descripción corta/larga o el meta título/descripción vacíos o demasiado cortos. |
 | Productos | `dwc_get_product_content` | solo lectura | Descripciones y meta SEO de un producto, con su longitud, en el idioma por defecto o en otro. |
-| Productos | `dwc_update_product` | **escritura** | Actualiza precio, activo, nombre, referencia, peso, `on_sale` y stock. Solo cambia los campos enviados. |
+| Productos | `dwc_update_product` | **escritura** | Actualiza precio, precio de coste, regla de IVA, activo, nombre, referencia, EAN/UPC/ISBN/MPN, peso y medidas, visibilidad, disponible para pedido, mostrar precio, cantidad mínima, estado, comportamiento sin stock, URL amigable, textos de disponibilidad, `on_sale` y stock. Solo cambia los campos enviados; nombre, URL y textos de disponibilidad, en el idioma por defecto o en otro (`language`, código ISO). |
 | Productos | `dwc_update_combination_stock` | **escritura** | Cambia el stock de una combinación (talla, color…); el total del producto se recalcula. |
 | Productos | `dwc_bulk_update_prices` | **escritura** | Sube o baja precios de una categoría y/o marca en % o importe. Primero devuelve una vista previa; solo aplica con `confirm=true`. |
 | Productos | `dwc_create_product_discount` | **escritura** | Crea un descuento (porcentaje o importe), opcionalmente entre dos fechas. |
 | Productos | `dwc_delete_product_discount` | **escritura** | Elimina un descuento (no los de reglas de precios del catálogo). |
 | Productos | `dwc_update_product_categories` | **escritura** | Añade o quita categorías de un producto y cambia su categoría principal. |
 | Productos | `dwc_set_product_brand` | **escritura** | Asigna o quita la marca de un producto. |
+| Productos | `dwc_update_product_features` | **escritura** | Asigna (valor predefinido o texto personalizado) o quita características de un producto; el resto se conserva. |
 | Productos | `dwc_update_product_description` | **escritura** | Actualiza la descripción corta y/o larga, en el idioma por defecto o en otro (`language`, código ISO). |
 | Productos | `dwc_update_product_meta` | **escritura** | Actualiza el meta título y/o la meta descripción, en el idioma por defecto o en otro (`language`, código ISO). |
 | Pedidos y ventas | `dwc_get_orders_by_status` | solo lectura | Pedidos recientes, opcionalmente filtrados por estado. |

@@ -14,7 +14,7 @@ use Mcp\Schema\ToolAnnotations;
 
 /**
  * Write tools for products: bulk price changes, discounts (specific prices),
- * combination stock, categories and brand. All of them MODIFY live store data.
+ * combination stock, categories, brand and features. All of them MODIFY live store data.
  */
 class ProductWriteTools
 {
@@ -486,6 +486,192 @@ class ProductWriteTools
                 ? ($id_manufacturer > 0 ? sprintf('Brand of product %d set to %s.', $id_product, $name) : sprintf('Brand removed from product %d.', $id_product))
                 : sprintf('Could not save product %d.', $id_product),
         ];
+    }
+
+    /**
+     * Set or remove features of a product.
+     *
+     * Each item of $set replaces ALL current values of its feature on the
+     * product. An item is either {"id_feature_value": N} (a predefined value,
+     * see dwc_list_features) or {"id_feature": N, "custom_value": "text"}
+     * (a free text only for this product). Features not mentioned are kept.
+     *
+     * A new custom value is saved in every language, so no translation is left
+     * empty; when the feature already had a custom value on this product, only
+     * the given language (or the default one) is changed.
+     *
+     * @param int                            $id_product The product ID.
+     * @param array<int,mixed>|null          $set        Values to assign. Null = none.
+     * @param int[]|null                     $remove     Feature ids to remove from the product. Null = none.
+     * @param string|null                    $language   Language ISO code for custom values. Null = default language.
+     *
+     * @return array<string, mixed>
+     */
+    #[McpTool(
+        name: 'dwc_update_product_features',
+        title: 'Update product features',
+        description: 'Sets and/or removes features of a product (e.g. Material: Cotton). Each item of "set" replaces the current value of its feature and is either {"id_feature_value": N} for a predefined value or {"id_feature": N, "custom_value": "text"} for free text. "remove" takes feature ids. Other features are kept. Get ids with dwc_list_features. Modifies live store data.',
+        annotations: new ToolAnnotations(title: 'Update product features', readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false)
+    )]
+    public function updateProductFeatures(
+        #[Schema(type: 'integer', minimum: 1)]
+        int $id_product,
+        #[Schema(
+            type: 'array',
+            items: [
+                'type' => 'object',
+                'properties' => [
+                    'id_feature_value' => ['type' => 'integer', 'minimum' => 1],
+                    'id_feature' => ['type' => 'integer', 'minimum' => 1],
+                    'custom_value' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
+                ],
+            ],
+            maxItems: 50
+        )]
+        ?array $set = null,
+        #[Schema(type: 'array', items: ['type' => 'integer', 'minimum' => 1], maxItems: 50)]
+        ?array $remove = null,
+        #[Schema(type: 'string', maxLength: 5)]
+        ?string $language = null
+    ): array {
+        if (!\Validate::isLoadedObject(new \Product($id_product))) {
+            return ['success' => false, 'message' => sprintf('Product %d not found.', $id_product)];
+        }
+        $set = $set ?? [];
+        $remove = array_values(array_unique(array_map('intval', $remove ?? [])));
+        if ($set === [] && $remove === []) {
+            return ['success' => false, 'message' => 'Nothing to update: provide set or remove.'];
+        }
+        $idLang = ProductQueryTools::langId($language);
+        if ($idLang === null) {
+            return ['success' => false, 'message' => sprintf('Language "%s" not found or inactive.', (string) $language)];
+        }
+
+        $db = \Db::getInstance();
+        // Validate everything before writing anything. Per feature: predefined value ids and/or one custom text.
+        $wanted = [];
+        foreach ($set as $index => $item) {
+            $item = is_array($item) ? $item : [];
+            $idValue = (int) ($item['id_feature_value'] ?? 0);
+            $custom = isset($item['custom_value']) ? trim((string) $item['custom_value']) : null;
+            if (($idValue > 0) === ($custom !== null)) {
+                return ['success' => false, 'message' => sprintf('Item %d: give either id_feature_value or id_feature with custom_value.', $index)];
+            }
+            if ($idValue > 0) {
+                $row = $db->getRow('SELECT id_feature, custom FROM `' . _DB_PREFIX_ . 'feature_value` WHERE id_feature_value = ' . $idValue);
+                if (!is_array($row) || (int) $row['custom'] === 1) {
+                    return ['success' => false, 'message' => sprintf('Feature value %d not found (custom values of other products cannot be reused).', $idValue)];
+                }
+                $idFeature = (int) $row['id_feature'];
+                if (isset($item['id_feature']) && (int) $item['id_feature'] !== $idFeature) {
+                    return ['success' => false, 'message' => sprintf('Feature value %d belongs to feature %d, not %d.', $idValue, $idFeature, (int) $item['id_feature'])];
+                }
+                $wanted[$idFeature]['values'][] = $idValue;
+            } else {
+                $idFeature = (int) ($item['id_feature'] ?? 0);
+                if ($custom === '' || !\Validate::isGenericName($custom)) {
+                    return ['success' => false, 'message' => sprintf('Item %d: custom_value is empty or contains characters that are not allowed (<>={}).', $index)];
+                }
+                if ($idFeature < 1 || !(int) $db->getValue('SELECT 1 FROM `' . _DB_PREFIX_ . 'feature` WHERE id_feature = ' . $idFeature)) {
+                    return ['success' => false, 'message' => sprintf('Item %d: feature %d not found.', $index, $idFeature)];
+                }
+                if (isset($wanted[$idFeature]['custom'])) {
+                    return ['success' => false, 'message' => sprintf('Only one custom value per feature (feature %d).', $idFeature)];
+                }
+                $wanted[$idFeature]['custom'] = $custom;
+            }
+            if (in_array($idFeature, $remove, true)) {
+                return ['success' => false, 'message' => sprintf('Feature %d cannot be set and removed at the same time.', $idFeature)];
+            }
+        }
+
+        $currentRows = $db->executeS(
+            'SELECT fp.id_feature, fp.id_feature_value, v.custom
+             FROM `' . _DB_PREFIX_ . 'feature_product` fp
+             LEFT JOIN `' . _DB_PREFIX_ . 'feature_value` v ON v.id_feature_value = fp.id_feature_value
+             WHERE fp.id_product = ' . $id_product
+        );
+        $current = [];
+        foreach (is_array($currentRows) ? $currentRows : [] as $row) {
+            $current[(int) $row['id_feature']][(int) $row['id_feature_value']] = (bool) $row['custom'];
+        }
+
+        $languages = array_map(static fn (array $l): int => (int) $l['id_lang'], \Language::getLanguages(false));
+        $removed = [];
+        foreach (array_unique(array_merge($remove, array_keys($wanted))) as $idFeature) {
+            $keepCustom = isset($wanted[$idFeature]['custom']) ? $this->currentCustom($current[$idFeature] ?? []) : 0;
+            foreach ($current[$idFeature] ?? [] as $idValue => $isCustom) {
+                if ($idValue === $keepCustom) {
+                    continue;
+                }
+                $db->delete('feature_product', 'id_product = ' . $id_product . ' AND id_feature = ' . $idFeature . ' AND id_feature_value = ' . $idValue);
+                if ($isCustom) {
+                    // A custom value belongs to this product only: drop it with the link.
+                    $db->delete('feature_value_lang', 'id_feature_value = ' . $idValue);
+                    $db->delete('feature_value', 'id_feature_value = ' . $idValue);
+                }
+            }
+            if (in_array($idFeature, $remove, true) && isset($current[$idFeature])) {
+                $removed[] = $idFeature;
+            }
+        }
+
+        $assigned = [];
+        foreach ($wanted as $idFeature => $want) {
+            foreach (array_unique($want['values'] ?? []) as $idValue) {
+                $db->insert('feature_product', ['id_feature' => $idFeature, 'id_product' => $id_product, 'id_feature_value' => $idValue]);
+                $assigned[] = ['id_feature' => $idFeature, 'id_feature_value' => $idValue];
+            }
+            if (isset($want['custom'])) {
+                $idValue = $this->currentCustom($current[$idFeature] ?? []);
+                if ($idValue > 0) {
+                    // Existing custom value: only this language, the other translations stay.
+                    $db->execute(
+                        'INSERT INTO `' . _DB_PREFIX_ . 'feature_value_lang` (id_feature_value, id_lang, value)
+                         VALUES (' . $idValue . ', ' . $idLang . ', \'' . pSQL($want['custom']) . '\')
+                         ON DUPLICATE KEY UPDATE value = VALUES(value)'
+                    );
+                } else {
+                    $db->insert('feature_value', ['id_feature' => $idFeature, 'custom' => 1]);
+                    $idValue = (int) $db->Insert_ID();
+                    foreach ($languages as $lang) {
+                        $db->insert('feature_value_lang', ['id_feature_value' => $idValue, 'id_lang' => $lang, 'value' => pSQL($want['custom'])]);
+                    }
+                    $db->insert('feature_product', ['id_feature' => $idFeature, 'id_product' => $id_product, 'id_feature_value' => $idValue]);
+                }
+                $assigned[] = ['id_feature' => $idFeature, 'id_feature_value' => $idValue, 'custom_value' => $want['custom']];
+            }
+        }
+
+        // Features change prices under catalog price rules and must show up in search.
+        \SpecificPriceRule::applyAllRules([$id_product]);
+        $db->update('product', ['indexed' => 0, 'date_upd' => date('Y-m-d H:i:s')], 'id_product = ' . $id_product);
+        $db->update('product_shop', ['indexed' => 0, 'date_upd' => date('Y-m-d H:i:s')], 'id_product = ' . $id_product);
+
+        return [
+            'success' => true,
+            'id_product' => $id_product,
+            'assigned' => $assigned,
+            'removed_features' => $removed,
+            'language' => (string) \Language::getIsoById($idLang),
+            'message' => sprintf('Features of product %d updated.', $id_product),
+        ];
+    }
+
+    /**
+     * The custom value a product already has for one feature, 0 if none.
+     *
+     * @param array<int, bool> $values id_feature_value => is custom
+     */
+    private function currentCustom(array $values): int
+    {
+        foreach ($values as $idValue => $isCustom) {
+            if ($isCustom) {
+                return (int) $idValue;
+            }
+        }
+
+        return 0;
     }
 
     private static function combinationBelongs(int $idProduct, int $idProductAttribute): bool

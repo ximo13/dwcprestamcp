@@ -101,6 +101,7 @@
                             <li><a href="#dwc-tool-product-discounts">Ver descuentos de productos <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-list-categories">Ver las categorías <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-list-brands">Ver las marcas <span class="dwc-toc-badge read">consulta</span></a></li>
+                            <li><a href="#dwc-tool-list-features">Ver las características <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-product">Actualizar un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-update-combination-stock">Actualizar el stock de una combinación <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-bulk-update-prices">Cambiar precios en bloque <span class="dwc-toc-badge write">modifica</span></a></li>
@@ -108,6 +109,7 @@
                             <li><a href="#dwc-tool-delete-discount">Quitar un descuento <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-update-categories">Cambiar las categorías de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-set-brand">Cambiar la marca de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
+                            <li><a href="#dwc-tool-update-features">Cambiar las características de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
                             <li><a href="#dwc-tool-missing-content">Detectar productos con descripciones incompletas <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-product-content">Ver las descripciones de un producto <span class="dwc-toc-badge read">consulta</span></a></li>
                             <li><a href="#dwc-tool-update-description">Mejorar la descripción de un producto <span class="dwc-toc-badge write">modifica</span></a></li>
@@ -456,16 +458,37 @@ composer install --no-dev</code></pre>
                     <p>&ldquo;¿Cuántos productos hay de Satisfyer?&rdquo;</p>
                 </div>
             </div>
+            <div id="dwc-tool-list-features" style="padding-top: 25px;">
+                <h5>Ver las características &nbsp;<span class="label label-read">consulta</span></h5>
+                <p>Lista las <strong>características</strong> de la tienda (material, tamaño, para quién…), o las que contengan un texto, con sus <strong>valores predefinidos</strong>. Los textos personalizados de cada producto no aparecen aquí; se ven en la ficha del producto.</p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p>&ldquo;¿Qué características tengo?&rdquo;</p>
+                    <p>&ldquo;¿Qué valores tiene la característica Texturas?&rdquo;</p>
+                </div>
+            </div>
 
             <!-- ---------- Actualizar un producto ---------- -->
             <div id="dwc-tool-update-product" style="padding-top: 25px;">
                 <h5>Actualizar un producto &nbsp;<span class="label label-write">modifica</span></h5>
                 <p>
-                    Cambia datos de un producto existente. Puedes cambiar el <strong>precio</strong>,
-                    el <strong>peso</strong>, el <strong>nombre</strong>, la <strong>referencia</strong>,
-                    el <strong>stock</strong>, <strong>ocultarlo o publicarlo</strong> del catálogo,
-                    y marcar la <strong>etiqueta de oferta</strong>. Solo cambia lo que le pidas;
-                    el resto queda como estaba.
+                    Cambia datos de un producto existente. Solo cambia lo que le pidas; el resto
+                    queda como estaba. Puedes cambiar:
+                </p>
+                <ul>
+                    <li><strong>Precio</strong> de venta, <strong>precio de coste</strong> y <strong>regla de IVA</strong>.</li>
+                    <li><strong>Nombre</strong>, <strong>referencia</strong> y códigos <strong>EAN, UPC, ISBN y MPN</strong>.</li>
+                    <li><strong>Peso</strong> y <strong>medidas</strong> del paquete (ancho, alto y fondo).</li>
+                    <li><strong>Stock</strong>, <strong>cantidad mínima</strong> de compra y qué hacer <strong>sin stock</strong> (aceptar o rechazar pedidos).</li>
+                    <li><strong>Ocultarlo o publicarlo</strong>, dónde se muestra (catálogo, búsqueda, ambos o ninguno), si <strong>se puede pedir</strong> y si <strong>se ve el precio</strong>.</li>
+                    <li><strong>Estado</strong> (nuevo, usado o reacondicionado) y la <strong>etiqueta de oferta</strong>.</li>
+                    <li><strong>URL amigable</strong> y los <strong>textos de disponibilidad</strong> (con stock y sin stock).</li>
+                </ul>
+                <p>
+                    El <strong>nombre</strong>, la <strong>URL amigable</strong> y los <strong>textos de disponibilidad</strong>
+                    se cambian solo en el idioma principal de la tienda, o en el que le indiques; las traducciones
+                    a otros idiomas no se tocan.
                 </p>
                 <p>
                     Necesita saber <strong>de qué producto hablas</strong>, así que dale su ID
@@ -473,11 +496,10 @@ composer install --no-dev</code></pre>
                 </p>
 
                 <div class="alert alert-warning">
-                    <strong>Ojo con "poner en oferta":</strong> hoy por hoy esta acción solo enciende
+                    <strong>Ojo con "poner en oferta":</strong> esta acción solo enciende
                     la <em>etiqueta visual</em> "¡En oferta!" en la ficha del producto. <strong>No
                     baja el precio ni configura ningún descuento.</strong> Para una rebaja real
-                    (que el precio baje de verdad) hay que crear un <em>precio específico</em>
-                    desde el back office, o esperar a que habilitemos una acción específica.
+                    (que el precio baje de verdad) usa <a href="#dwc-tool-create-discount">Crear un descuento</a>.
                 </div>
 
                 <p><strong>Ejemplos de frases:</strong></p>
@@ -493,6 +515,24 @@ composer install --no-dev</code></pre>
                     <p><strong>Cambiar el nombre o la referencia</strong></p>
                     <p>&ldquo;Cambia el nombre del producto 123 a &lsquo;Vela aromática lavanda&rsquo;.&rdquo;</p>
                     <p>&ldquo;Ponle al producto 123 la referencia VEL-LAV-01.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>Códigos y precio de coste</strong></p>
+                    <p>&ldquo;Ponle al producto 123 el EAN 8412345678905 y un precio de coste de 6,20.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>Sin stock y cantidad mínima</strong></p>
+                    <p>&ldquo;Que el producto 123 no acepte pedidos cuando se quede sin stock.&rdquo;</p>
+                    <p>&ldquo;Pon una cantidad mínima de 2 unidades al producto 123.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>URL y textos de disponibilidad</strong></p>
+                    <p>&ldquo;Cambia la URL del producto 123 a vela-aromatica-lavanda.&rdquo;</p>
+                    <p>&ldquo;Pon en el producto 123 el texto &lsquo;Envío en 24 h&rsquo; cuando hay stock.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>Cambiar el nombre en otro idioma</strong></p>
+                    <p>&ldquo;Pon el nombre en inglés del producto 123 a &lsquo;Lavender scented candle&rsquo;.&rdquo;</p>
                 </div>
                 <div class="dwc-example">
                     <p><strong>Ocultar o publicar en la web</strong></p>
@@ -588,6 +628,35 @@ composer install --no-dev</code></pre>
                 <div class="dwc-example">
                     <p>&ldquo;Pon la marca Womanizer al producto 123.&rdquo;</p>
                     <p>&ldquo;Quita la marca del producto 123.&rdquo;</p>
+                </div>
+            </div>
+            <div id="dwc-tool-update-features" style="padding-top: 25px;">
+                <h5>Cambiar las características de un producto &nbsp;<span class="label label-write">modifica</span></h5>
+                <p>
+                    Asigna o quita <strong>características</strong> de un producto. Puedes usar un
+                    <strong>valor predefinido</strong> (por ejemplo, Texturas: Textura Lisa) o escribir un
+                    <strong>texto personalizado</strong> solo para ese producto. Al asignar una característica
+                    se sustituye el valor que tuviera; las características que no menciones se quedan como estaban.
+                </p>
+                <p>
+                    Un texto personalizado nuevo se guarda en todos los idiomas, para que ninguno quede vacío.
+                    Si el producto ya tenía un texto personalizado en esa característica, solo se cambia en el
+                    idioma principal o en el que le indiques, y las traducciones no se tocan.
+                </p>
+
+                <p><strong>Ejemplos de frases:</strong></p>
+                <div class="dwc-example">
+                    <p><strong>Valor predefinido</strong></p>
+                    <p>&ldquo;Ponle al producto 123 la característica Texturas: Textura Lisa.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>Texto personalizado</strong></p>
+                    <p>&ldquo;En el producto 123, pon como Material &lsquo;Silicona médica&rsquo;.&rdquo;</p>
+                    <p>&ldquo;Traduce al inglés el material del producto 123: &lsquo;Medical-grade silicone&rsquo;.&rdquo;</p>
+                </div>
+                <div class="dwc-example">
+                    <p><strong>Quitar</strong></p>
+                    <p>&ldquo;Quita la característica Nivel de experiencia del producto 123.&rdquo;</p>
                 </div>
             </div>
 
