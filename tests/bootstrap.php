@@ -510,6 +510,10 @@ if (!class_exists('Currency', false)) {
     class Currency
     {
         public string $iso_code = '';
+
+        public function __construct(?int $id = null)
+        {
+        }
     }
 }
 
