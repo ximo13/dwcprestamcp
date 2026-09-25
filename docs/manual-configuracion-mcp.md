@@ -197,7 +197,7 @@ Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 | Productos | `dwc_get_low_stock_products` | solo lectura | Productos con stock igual o por debajo de un umbral. |
 | Productos | `dwc_search_products` | solo lectura | Busca productos por nombre o referencia; precio, stock y si está activo. |
 | Productos | `dwc_get_product_stock` | solo lectura | Stock de un producto, desglosado por combinación (talla, color…). |
-| Productos | `dwc_get_product_details` | solo lectura | Ficha completa: categorías, marca, proveedor, precios con y sin IVA, EAN, imágenes, combinaciones y características. |
+| Productos | `dwc_get_product_details` | solo lectura | Ficha completa: categorías, marca, proveedor, precios con y sin IVA, EAN, imágenes, combinaciones, características y etiquetas. |
 | Productos | `dwc_get_low_stock_combinations` | solo lectura | Combinaciones de productos activos con stock igual o por debajo de un umbral. |
 | Productos | `dwc_get_unsold_products` | solo lectura | Productos activos con stock y sin ventas en los últimos N días (stock parado). |
 | Productos | `dwc_get_unavailable_products` | solo lectura | Productos desactivados, o activos con stock 0 (e indica si admiten pedidos sin stock). |
@@ -216,6 +216,8 @@ Si ves esos datos, el endpoint, el token y las herramientas están operativos.
 | Productos | `dwc_update_product_categories` | **escritura** | Añade o quita categorías de un producto y cambia su categoría principal. |
 | Productos | `dwc_set_product_brand` | **escritura** | Asigna o quita la marca de un producto. |
 | Productos | `dwc_update_product_features` | **escritura** | Asigna (valor predefinido o texto personalizado) o quita características de un producto; el resto se conserva. |
+| Productos | `dwc_update_product_images` | **escritura** | Textos alternativos de las imágenes en un idioma (también rellenar todos los que falten) y la imagen de portada. |
+| Productos | `dwc_update_product_tags` | **escritura** | Añade, quita o sustituye las etiquetas de un producto en un idioma. |
 | Productos | `dwc_update_product_description` | **escritura** | Actualiza la descripción corta y/o larga, en el idioma por defecto o en otro (`language`, código ISO). |
 | Productos | `dwc_update_product_meta` | **escritura** | Actualiza el meta título y/o la meta descripción, en el idioma por defecto o en otro (`language`, código ISO). |
 | Pedidos y ventas | `dwc_get_orders_by_status` | solo lectura | Pedidos recientes, opcionalmente filtrados por estado. |

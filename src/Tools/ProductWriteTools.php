@@ -14,7 +14,7 @@ use Mcp\Schema\ToolAnnotations;
 
 /**
  * Write tools for products: bulk price changes, discounts (specific prices),
- * combination stock, categories, brand and features. All of them MODIFY live store data.
+ * combination stock, categories, brand, features, image alt texts and tags. All of them MODIFY live store data.
  */
 class ProductWriteTools
 {
@@ -655,6 +655,223 @@ class ProductWriteTools
             'removed_features' => $removed,
             'language' => (string) \Language::getIsoById($idLang),
             'message' => sprintf('Features of product %d updated.', $id_product),
+        ];
+    }
+
+    /**
+     * Change the alt text (legend) of product images, in one language, and/or
+     * choose the cover image. Image ids come from dwc_get_product_details.
+     *
+     * @param int                     $id_product The product ID.
+     * @param array<int,mixed>|null   $legends    Items {"id_image": N, "legend": "text"}. "" clears it. Null = none.
+     * @param string|null             $legend_all Alt text for every image of the product that has none in this language. Null = none.
+     * @param int|null                $cover      Image id to make the cover. Null = unchanged.
+     * @param string|null             $language   Language ISO code for the texts. Null = default language.
+     *
+     * @return array<string, mixed>
+     */
+    #[McpTool(
+        name: 'dwc_update_product_images',
+        title: 'Update product images',
+        description: 'Changes the alt text (legend) of product images in the default language or the one given by its ISO code, fills the alt text of images that have none (legend_all), and/or sets the cover image. Other languages keep theirs. Get image ids with dwc_get_product_details. Does not upload or delete images. Modifies live store data.',
+        annotations: new ToolAnnotations(title: 'Update product images', readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false)
+    )]
+    public function updateProductImages(
+        #[Schema(type: 'integer', minimum: 1)]
+        int $id_product,
+        #[Schema(
+            type: 'array',
+            items: [
+                'type' => 'object',
+                'properties' => [
+                    'id_image' => ['type' => 'integer', 'minimum' => 1],
+                    'legend' => ['type' => 'string', 'maxLength' => 128],
+                ],
+                'required' => ['id_image', 'legend'],
+            ],
+            maxItems: 100
+        )]
+        ?array $legends = null,
+        #[Schema(type: 'string', minLength: 1, maxLength: 128)]
+        ?string $legend_all = null,
+        #[Schema(type: 'integer', minimum: 1)]
+        ?int $cover = null,
+        #[Schema(type: 'string', maxLength: 5)]
+        ?string $language = null
+    ): array {
+        if (!\Validate::isLoadedObject(new \Product($id_product))) {
+            return ['success' => false, 'message' => sprintf('Product %d not found.', $id_product)];
+        }
+        $legends = $legends ?? [];
+        if ($legends === [] && $legend_all === null && $cover === null) {
+            return ['success' => false, 'message' => 'Nothing to update: provide legends, legend_all or cover.'];
+        }
+        $idLang = ProductQueryTools::langId($language);
+        if ($idLang === null) {
+            return ['success' => false, 'message' => sprintf('Language "%s" not found or inactive.', (string) $language)];
+        }
+
+        $db = \Db::getInstance();
+        $imageRows = $db->executeS('SELECT id_image FROM `' . _DB_PREFIX_ . 'image` WHERE id_product = ' . $id_product);
+        $productImages = [];
+        foreach (is_array($imageRows) ? $imageRows : [] as $row) {
+            $productImages[] = (int) $row['id_image'];
+        }
+
+        // Validate everything before writing anything.
+        $texts = [];
+        foreach ($legends as $index => $item) {
+            $item = is_array($item) ? $item : [];
+            $idImage = (int) ($item['id_image'] ?? 0);
+            if (!in_array($idImage, $productImages, true)) {
+                return ['success' => false, 'message' => sprintf('Item %d: image %d does not belong to product %d.', $index, $idImage, $id_product)];
+            }
+            $text = trim((string) ($item['legend'] ?? ''));
+            if ($text !== '' && !\Validate::isGenericName($text)) {
+                return ['success' => false, 'message' => sprintf('Item %d: legend contains characters that are not allowed (<>={}).', $index)];
+            }
+            $texts[$idImage] = $text;
+        }
+        if ($legend_all !== null) {
+            $legend_all = trim($legend_all);
+            if ($legend_all === '' || !\Validate::isGenericName($legend_all)) {
+                return ['success' => false, 'message' => 'legend_all is empty or contains characters that are not allowed (<>={}).'];
+            }
+            $existing = [];
+            $legendRows = $db->executeS('SELECT id_image, legend FROM `' . _DB_PREFIX_ . 'image_lang` WHERE id_lang = ' . $idLang . ' AND id_image IN (' . implode(',', $productImages ?: [0]) . ')');
+            foreach (is_array($legendRows) ? $legendRows : [] as $row) {
+                $existing[(int) $row['id_image']] = trim((string) $row['legend']);
+            }
+            foreach ($productImages as $idImage) {
+                // Explicit legends win; only images still without text get the common one.
+                if (!isset($texts[$idImage]) && ($existing[$idImage] ?? '') === '') {
+                    $texts[$idImage] = $legend_all;
+                }
+            }
+        }
+        if ($cover !== null && !in_array($cover, $productImages, true)) {
+            return ['success' => false, 'message' => sprintf('Image %d does not belong to product %d.', $cover, $id_product)];
+        }
+
+        foreach ($texts as $idImage => $text) {
+            $db->execute(
+                'INSERT INTO `' . _DB_PREFIX_ . 'image_lang` (id_image, id_lang, legend)
+                 VALUES (' . $idImage . ', ' . $idLang . ', \'' . pSQL($text) . '\')
+                 ON DUPLICATE KEY UPDATE legend = VALUES(legend)'
+            );
+        }
+
+        if ($cover !== null) {
+            // image_shop has a unique (id_product, id_shop, cover) key: non-covers must be NULL, not 0.
+            $db->execute('UPDATE `' . _DB_PREFIX_ . 'image` SET cover = NULL WHERE id_product = ' . $id_product);
+            $db->execute('UPDATE `' . _DB_PREFIX_ . 'image_shop` SET cover = NULL WHERE id_product = ' . $id_product);
+            $db->execute('UPDATE `' . _DB_PREFIX_ . 'image` SET cover = 1 WHERE id_image = ' . $cover);
+            $db->execute('UPDATE `' . _DB_PREFIX_ . 'image_shop` SET cover = 1 WHERE id_image = ' . $cover);
+        }
+
+        ksort($texts);
+
+        return [
+            'success' => true,
+            'id_product' => $id_product,
+            'legends' => array_map(static fn (int $id, string $text): array => ['id_image' => $id, 'legend' => $text], array_keys($texts), array_values($texts)),
+            'cover' => $cover,
+            'language' => (string) \Language::getIsoById($idLang),
+            'message' => sprintf('Images of product %d updated.', $id_product),
+        ];
+    }
+
+    /**
+     * Add, remove or replace the tags of a product in one language.
+     *
+     * @param int           $id_product The product ID.
+     * @param string[]|null $add        Tags to add. Null = none.
+     * @param string[]|null $remove     Tags to remove (case-insensitive). Null = none.
+     * @param string[]|null $replace    Full new tag list for this language ([] removes all). Use it instead of add/remove. Null = no replace.
+     * @param string|null   $language   Language ISO code. Null = default language.
+     *
+     * @return array<string, mixed>
+     */
+    #[McpTool(
+        name: 'dwc_update_product_tags',
+        title: 'Update product tags',
+        description: 'Adds and/or removes tags of a product, or replaces its whole tag list (replace; [] removes all), in the default language or the one given by its ISO code. Other languages keep their tags. Current tags are shown by dwc_get_product_details. Modifies live store data.',
+        annotations: new ToolAnnotations(title: 'Update product tags', readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false)
+    )]
+    public function updateProductTags(
+        #[Schema(type: 'integer', minimum: 1)]
+        int $id_product,
+        #[Schema(type: 'array', items: ['type' => 'string', 'minLength' => 1, 'maxLength' => 32], maxItems: 50)]
+        ?array $add = null,
+        #[Schema(type: 'array', items: ['type' => 'string', 'minLength' => 1, 'maxLength' => 32], maxItems: 50)]
+        ?array $remove = null,
+        #[Schema(type: 'array', items: ['type' => 'string', 'minLength' => 1, 'maxLength' => 32], maxItems: 50)]
+        ?array $replace = null,
+        #[Schema(type: 'string', maxLength: 5)]
+        ?string $language = null
+    ): array {
+        if (!\Validate::isLoadedObject(new \Product($id_product))) {
+            return ['success' => false, 'message' => sprintf('Product %d not found.', $id_product)];
+        }
+        if ($replace !== null && ($add !== null || $remove !== null)) {
+            return ['success' => false, 'message' => 'Use replace on its own, or add/remove.'];
+        }
+        if ($replace === null && $add === null && $remove === null) {
+            return ['success' => false, 'message' => 'Nothing to update: provide add, remove or replace.'];
+        }
+        $idLang = ProductQueryTools::langId($language);
+        if ($idLang === null) {
+            return ['success' => false, 'message' => sprintf('Language "%s" not found or inactive.', (string) $language)];
+        }
+
+        $clean = static function (?array $tags): array {
+            $out = [];
+            foreach ($tags ?? [] as $tag) {
+                $tag = trim((string) $tag);
+                if ($tag !== '') {
+                    $out[mb_strtolower($tag, 'UTF-8')] = $tag;
+                }
+            }
+
+            return $out;
+        };
+        foreach (array_merge($clean($add), $clean($replace)) as $tag) {
+            if (!\Validate::isGenericName($tag) || mb_strlen($tag, 'UTF-8') > 32 || str_contains($tag, ',')) {
+                return ['success' => false, 'message' => sprintf('Tag "%s" is too long (max 32) or contains characters that are not allowed (<>={},).', $tag)];
+            }
+        }
+
+        $db = \Db::getInstance();
+        $currentRows = $db->executeS(
+            'SELECT t.name FROM `' . _DB_PREFIX_ . 'product_tag` pt
+             INNER JOIN `' . _DB_PREFIX_ . 'tag` t ON t.id_tag = pt.id_tag
+             WHERE pt.id_product = ' . $id_product . ' AND pt.id_lang = ' . $idLang
+        );
+        $current = $clean(array_column(is_array($currentRows) ? $currentRows : [], 'name'));
+        $final = $replace !== null
+            ? $clean($replace)
+            // Union keeps an existing tag as it is written when it is added again with other capitals.
+            : array_diff_key($current + $clean($add), $clean($remove));
+
+        $added = array_values(array_diff_key($final, $current));
+        $removed = array_values(array_diff_key($current, $final));
+        if ($added !== [] || $removed !== []) {
+            \Tag::deleteProductTagsInLang($id_product, $idLang);
+            if ($final !== [] && !\Tag::addTags($idLang, $id_product, array_values($final))) {
+                return ['success' => false, 'message' => sprintf('Could not save the tags of product %d.', $id_product)];
+            }
+        }
+        $finalList = array_values($final);
+        sort($finalList, SORT_NATURAL | SORT_FLAG_CASE);
+
+        return [
+            'success' => true,
+            'id_product' => $id_product,
+            'added' => $added,
+            'removed' => $removed,
+            'tags' => $finalList,
+            'language' => (string) \Language::getIsoById($idLang),
+            'message' => sprintf('Tags of product %d updated.', $id_product),
         ];
     }
 

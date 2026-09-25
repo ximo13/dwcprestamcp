@@ -22,7 +22,7 @@ class ProductCatalogTools
 
     /**
      * Full product sheet: categories, brand, supplier, prices with and without
-     * tax, identifiers (EAN/UPC/ISBN/MPN), images, combinations and features.
+     * tax, identifiers (EAN/UPC/ISBN/MPN), images, combinations, features and tags.
      *
      * @param int $id_product The product ID.
      *
@@ -31,7 +31,7 @@ class ProductCatalogTools
     #[McpTool(
         name: 'dwc_get_product_details',
         title: 'Get product details',
-        description: 'Returns the full sheet of a product: categories, brand, supplier, prices (tax excl./incl., with and without discount), EAN/UPC/ISBN/MPN, images, combinations with stock, and features.',
+        description: 'Returns the full sheet of a product: categories, brand, supplier, prices (tax excl./incl., with and without discount), EAN/UPC/ISBN/MPN, images, combinations with stock, features and tags.',
         annotations: new ToolAnnotations(title: 'Get product details', readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false)
     )]
     public function getProductDetails(
@@ -99,6 +99,13 @@ class ProductCatalogTools
             $features[] = ['name' => (string) $f['name'], 'value' => (string) $f['value']];
         }
 
+        $tags = $db->executeS(
+            'SELECT t.name FROM `' . _DB_PREFIX_ . 'product_tag` pt
+             INNER JOIN `' . _DB_PREFIX_ . 'tag` t ON t.id_tag = pt.id_tag
+             WHERE pt.id_product = ' . $id_product . ' AND pt.id_lang = ' . $idLang . '
+             ORDER BY t.name ASC'
+        );
+
         $noSpecific = null;
 
         return [
@@ -130,6 +137,7 @@ class ProductCatalogTools
             'images' => $images,
             'combinations' => $combinations,
             'features' => $features,
+            'tags' => array_map(static fn (array $t): string => (string) $t['name'], is_array($tags) ? $tags : []),
             'date_add' => (string) $product->date_add,
             'date_upd' => (string) $product->date_upd,
         ];

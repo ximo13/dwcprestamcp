@@ -476,6 +476,24 @@ if (!class_exists('Db', false)) {
     }
 }
 
+if (!class_exists('Tag', false)) {
+    class Tag
+    {
+        /**
+         * @param string[]|string $tagList
+         */
+        public static function addTags(int $idLang, int $idProduct, $tagList, string $separator = ','): bool
+        {
+            return true;
+        }
+
+        public static function deleteProductTagsInLang(int $productId, int $langId): bool
+        {
+            return true;
+        }
+    }
+}
+
 if (!class_exists('SpecificPriceRule', false)) {
     class SpecificPriceRule
     {
