@@ -87,6 +87,7 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_get_product_discounts`   | read-only | Product discounts (specific prices): reduction, dates, restrictions; active, upcoming or all. |
 | `dwc_list_categories`         | read-only | Categories (optionally filtered by name) with parent and product count. |
 | `dwc_list_brands`             | read-only | Brands (manufacturers) with product count. |
+| `dwc_list_features`           | read-only | Features with their predefined values and ids. |
 | `dwc_get_orders_by_status`    | read-only | Recent orders, optionally filtered by status name or state id.    |
 | `dwc_get_sales_by_date_range` | read-only | Revenue, order count and average order value for a date range.    |
 | `dwc_get_top_selling_products`| read-only | Best-selling products by quantity in a period.                    |
@@ -94,13 +95,14 @@ The exact endpoint URL is shown on the module's configuration page.
 | `dwc_get_abandoned_carts`     | read-only | Carts with products but no order, within the last N days.         |
 | `dwc_get_products_missing_content` | read-only | Products whose short/long description or meta is empty or too short (content/SEO audit). |
 | `dwc_get_product_content`     | read-only | A product's descriptions and SEO meta (with lengths) for review/improvement. |
-| `dwc_update_product`          | **write** | Update a product: price, active, name, reference, weight, on-sale, stock (only provided fields change). |
+| `dwc_update_product`          | **write** | Update a product: price, cost price, tax rules group, active, name, reference, EAN/UPC/ISBN/MPN, weight and dimensions, visibility, orderable, show price, minimal quantity, condition, out-of-stock behaviour, friendly URL, availability labels, on-sale, stock (only provided fields change; translated fields in one language, `language` ISO code). |
 | `dwc_update_combination_stock` | **write** | Set the stock of one combination (size/colour); the product total is recalculated. |
 | `dwc_bulk_update_prices`      | **write** | Raise/lower prices of a category and/or brand by % or amount. Preview first; applies only with `confirm=true`. |
 | `dwc_create_product_discount` | **write** | Create a discount (percentage or amount), optionally between two dates. |
 | `dwc_delete_product_discount` | **write** | Delete a discount (not those from catalog price rules). |
 | `dwc_update_product_categories` | **write** | Add/remove categories of a product and set its main category. |
 | `dwc_set_product_brand`       | **write** | Set or remove the brand of a product. |
+| `dwc_update_product_features` | **write** | Set (predefined value or custom text) or remove features of a product. |
 | `dwc_update_product_description` | **write** | Update a product's short and/or long description, in the default language or another one (`language` ISO code). |
 | `dwc_update_product_meta`     | **write** | Update a product's SEO meta title and/or meta description, in the default language or another one (`language` ISO code). |
 
